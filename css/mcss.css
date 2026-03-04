@@ -1,0 +1,91 @@
+
+::-webkit-scrollbar-thumb {
+  background-color: #414141;
+}
+
+/* 鼠标 */
+/* 第二步：全局基础光标（页面所有空白/普通区域） */
+html, body {
+  cursor: url(/images/cursor/pointer.png), default;
+}
+
+/* 第三步：可点击元素（链接/按钮/图片/图标等） */
+/* 链接（包括hover/active状态） */
+a, a:hover, a:active, a:visited {
+  cursor: url(/images/cursor/link.png), pointer;
+}
+/* 图片（包括点击/hover） */
+img, svg, canvas {
+  cursor: url(/images/cursor/link.png), pointer;
+}
+/* 按钮/按钮类元素（包括所有状态） */
+button, .btn, input[type="button"], input[type="submit"], input[type="reset"] {
+  cursor: url(/images/cursor/link.png), pointer;
+}
+/* 导航/菜单/卡片等可点击区域 */
+.nav, .menu, .card, .list-item, .tab {
+  cursor: url(/images/cursor/link.png), pointer;
+}
+
+/* 第四步：文本输入类元素（输入框/文本域/代码块） */
+/* 单行输入框 */
+input[type="text"], input[type="password"], input[type="email"], input[type="search"] {
+  cursor: url(/images/cursor/beam.png), text;
+}
+/* 多行文本域 */
+textarea {
+  cursor: url(/images/cursor/beam.png), text;
+}
+/* 下拉选择框 */
+select {
+  cursor: url(/images/cursor/link.png), default;
+}
+/* 代码块/预格式化文本 */
+pre, code, .code-block {
+  cursor: url(/images/cursor/beam.png), text;
+}
+/* 可编辑文本区域 */
+[contenteditable="true"] {
+  cursor: url(/images/cursor/beam.png), text;
+}
+
+/* 第五步：特殊状态元素 */
+/* 禁用元素（按钮/输入框等） */
+[disabled], .disabled, .disabled * {
+  cursor: url(/images/cursor/unavaiable.png), not-allowed !important;
+}
+/* 加载中元素（比如加载按钮/骨架屏） */
+.loading, .loading * {
+  cursor: url(/images/cursor/pin.png), wait;
+  /* 如果有加载动画光标，替换为你的loading.ani；没有则用wait */
+}
+/* 拖拽元素（比如可拖动的卡片） */
+[draggable="true"], .draggable {
+  cursor: url(/images/cursor/move.png), move;
+  /* 可选：添加拖拽专用光标 */
+}
+/* 帮助/提示类元素 */
+.help, .tooltip, [title] {
+  cursor: url(/images/cursor/help.png), help;
+  /* 可选：添加帮助专用光标 */
+}
+
+/* 第六步：滚动条（浏览器滚动条区域） */
+/* Chrome/Safari 滚动条 */
+::-webkit-scrollbar {
+  cursor: inherit;
+}
+::-webkit-scrollbar-thumb {
+  cursor: url(/images/cursor/link.png), pointer;
+}
+/* Firefox 滚动条 */
+* {
+  scrollbar-color: auto;
+  scrollbar-width: auto;
+}
+
+/* 第七步：弹窗/遮罩/侧边栏等特殊区域 */
+.modal, .mask, .sidebar, .footer, .header {
+  cursor: inherit;
+  /* 继承body的基础光标，无需单独指定 */
+}
