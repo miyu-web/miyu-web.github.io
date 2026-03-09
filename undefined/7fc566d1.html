@@ -1,0 +1,3842 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>UnityURP-LitShader详解 | FISH HOME</title><meta name="author" content="米芝鱼"><meta name="copyright" content="米芝鱼"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="对Unity URP中对默认LitShader代码功能详解。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UnityURP-LitShader详解">
+<meta property="og:url" content="https://miyu-web.github.io/undefined/7fc566d1.html">
+<meta property="og:site_name" content="FISH HOME">
+<meta property="og:description" content="对Unity URP中对默认LitShader代码功能详解。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://miyu-web.github.io/images/head.png">
+<meta property="article:published_time" content="2026-03-09T15:20:26.000Z">
+<meta property="article:modified_time" content="2026-03-09T15:26:47.643Z">
+<meta property="article:author" content="米芝鱼">
+<meta property="article:tag" content="Shader">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://miyu-web.github.io/images/head.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "UnityURP-LitShader详解",
+  "url": "https://miyu-web.github.io/undefined/7fc566d1.html",
+  "image": "https://miyu-web.github.io/images/head.png",
+  "datePublished": "2026-03-09T15:20:26.000Z",
+  "dateModified": "2026-03-09T15:26:47.643Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "米芝鱼",
+      "url": "https://miyu-web.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://miyu-web.github.io/undefined/7fc566d1.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.9/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  highlight: {"plugin":"prism.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":300,"highlightFullpage":true,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: false,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'UnityURP-LitShader详解',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/mcss.css"><meta name="generator" content="Hexo 8.1.1"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/head.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">3</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-solid fa-house"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fab fa-brands fa-unity"></i><span> Unity技术博客</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/script/"><i class="fa-fw fas fa-regular fa-file-code"></i><span> 编程代码</span></a></li><li><a class="site-page child" href="/ta/"><i class="fa-fw fas fa-solid fa-scroll"></i><span> 技术美术</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background: linear-gradient(to top, #1f1f1f, #262626, #2e2e2e, #353535, #3d3d3d, #4a4a4a, #575757, #656565, #7c7c7c, #939393, #ababab, #c4c4c4);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">FISH HOME</span></a><a class="nav-page-title" href="/"><span class="site-name">UnityURP-LitShader详解</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-solid fa-house"></i><span> 首页</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fab fa-brands fa-unity"></i><span> Unity技术博客</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/script/"><i class="fa-fw fas fa-regular fa-file-code"></i><span> 编程代码</span></a></li><li><a class="site-page child" href="/ta/"><i class="fa-fw fas fa-solid fa-scroll"></i><span> 技术美术</span></a></li></ul></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">UnityURP-LitShader详解</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="fa-fw post-meta-icon fas fa-history"></i><span class="post-meta-label">更新于</span><time datetime="2026-03-09T15:26:47.643Z" title="更新于 2026-03-09 23:26:47">2026-03-09</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">18.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>91分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><div id="post-outdate-notice" data="{&quot;limitDay&quot;:365,&quot;messagePrev&quot;:&quot;距离上一次更新已经过去&quot;,&quot;messageNext&quot;:&quot;天, 文章内容可能已经过时，请注意辨别！&quot;,&quot;postUpdate&quot;:&quot;2026-03-09 23:26:47&quot;}" hidden></div><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;Unity URP Lit Shader是基于物理渲染的Shader，但Unity对其做了一些修改，不完全按照BRDF公式计算，很多都做了拟合曲线，这样就导致UnityURP的LitShader与实际的物理效果材质有所偏差。Unity这样做的目的是对其进行优化，以便能够在移动端高性能运行。</p>
+<hr>
+<h1 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h1><pre><code class="language-hlsl">Properties
+&#123;
+    // Specular vs Metallic workflow
+    _WorkflowMode(&quot;WorkflowMode&quot;, Float) = 1.0
+
+    [MainTexture] _BaseMap(&quot;Albedo&quot;, 2D) = &quot;white&quot; &#123;&#125;
+    [MainColor] _BaseColor(&quot;Color&quot;, Color) = (1,1,1,1)
+
+    _Cutoff(&quot;Alpha Cutoff&quot;, Range(0.0, 1.0)) = 0.5
+
+    _Smoothness(&quot;Smoothness&quot;, Range(0.0, 1.0)) = 0.5
+    _SmoothnessTextureChannel(&quot;Smoothness texture channel&quot;, Float) = 0
+
+    _Metallic(&quot;Metallic&quot;, Range(0.0, 1.0)) = 0.0
+    _MetallicGlossMap(&quot;Metallic&quot;, 2D) = &quot;white&quot; &#123;&#125;
+
+    _SpecColor(&quot;Specular&quot;, Color) = (0.2, 0.2, 0.2)
+    _SpecGlossMap(&quot;Specular&quot;, 2D) = &quot;white&quot; &#123;&#125;
+
+    [ToggleOff] _SpecularHighlights(&quot;Specular Highlights&quot;, Float) = 1.0
+    [ToggleOff] _EnvironmentReflections(&quot;Environment Reflections&quot;, Float) = 1.0
+
+    _BumpScale(&quot;Scale&quot;, Float) = 1.0
+    _BumpMap(&quot;Normal Map&quot;, 2D) = &quot;bump&quot; &#123;&#125;
+
+    _Parallax(&quot;Scale&quot;, Range(0.005, 0.08)) = 0.005
+    _ParallaxMap(&quot;Height Map&quot;, 2D) = &quot;black&quot; &#123;&#125;
+
+    _OcclusionStrength(&quot;Strength&quot;, Range(0.0, 1.0)) = 1.0
+    _OcclusionMap(&quot;Occlusion&quot;, 2D) = &quot;white&quot; &#123;&#125;
+
+    [HDR] _EmissionColor(&quot;Color&quot;, Color) = (0,0,0)
+    _EmissionMap(&quot;Emission&quot;, 2D) = &quot;white&quot; &#123;&#125;
+
+    _DetailMask(&quot;Detail Mask&quot;, 2D) = &quot;white&quot; &#123;&#125;
+    _DetailAlbedoMapScale(&quot;Scale&quot;, Range(0.0, 2.0)) = 1.0
+    _DetailAlbedoMap(&quot;Detail Albedo x2&quot;, 2D) = &quot;linearGrey&quot; &#123;&#125;
+    _DetailNormalMapScale(&quot;Scale&quot;, Range(0.0, 2.0)) = 1.0
+    [Normal] _DetailNormalMap(&quot;Normal Map&quot;, 2D) = &quot;bump&quot; &#123;&#125;
+
+    // SRP batching compatibility for Clear Coat (Not used in Lit)
+    [HideInInspector] _ClearCoatMask(&quot;_ClearCoatMask&quot;, Float) = 0.0
+    [HideInInspector] _ClearCoatSmoothness(&quot;_ClearCoatSmoothness&quot;, Float) = 0.0
+
+    // Blending state
+    _Surface(&quot;__surface&quot;, Float) = 0.0
+    _Blend(&quot;__blend&quot;, Float) = 0.0
+    _Cull(&quot;__cull&quot;, Float) = 2.0
+    [ToggleUI] _AlphaClip(&quot;__clip&quot;, Float) = 0.0
+    [HideInInspector] _SrcBlend(&quot;__src&quot;, Float) = 1.0
+    [HideInInspector] _DstBlend(&quot;__dst&quot;, Float) = 0.0
+    [HideInInspector] _SrcBlendAlpha(&quot;__srcA&quot;, Float) = 1.0
+    [HideInInspector] _DstBlendAlpha(&quot;__dstA&quot;, Float) = 0.0
+    [HideInInspector] _ZWrite(&quot;__zw&quot;, Float) = 1.0
+    [HideInInspector] _BlendModePreserveSpecular(&quot;_BlendModePreserveSpecular&quot;, Float) = 1.0
+    [HideInInspector] _AlphaToMask(&quot;__alphaToMask&quot;, Float) = 0.0
+
+    [ToggleUI] _ReceiveShadows(&quot;Receive Shadows&quot;, Float) = 1.0
+    // Editmode props
+    _QueueOffset(&quot;Queue offset&quot;, Float) = 0.0
+
+    // ObsoleteProperties
+    [HideInInspector] _MainTex(&quot;BaseMap&quot;, 2D) = &quot;white&quot; &#123;&#125;
+    [HideInInspector] _Color(&quot;Base Color&quot;, Color) = (1, 1, 1, 1)
+    [HideInInspector] _GlossMapScale(&quot;Smoothness&quot;, Float) = 0.0
+    [HideInInspector] _Glossiness(&quot;Smoothness&quot;, Float) = 0.0
+    [HideInInspector] _GlossyReflections(&quot;EnvironmentReflections&quot;, Float) = 0.0
+
+    [HideInInspector][NoScaleOffset]unity_Lightmaps(&quot;unity_Lightmaps&quot;, 2DArray) = &quot;&quot; &#123;&#125;
+    [HideInInspector][NoScaleOffset]unity_LightmapsInd(&quot;unity_LightmapsInd&quot;, 2DArray) = &quot;&quot; &#123;&#125;
+    [HideInInspector][NoScaleOffset]unity_ShadowMasks(&quot;unity_ShadowMasks&quot;, 2DArray) = &quot;&quot; &#123;&#125;
+&#125;
+</code></pre>
+<ul>
+<li><p><strong>_WorkflowMode</strong>：工作流模式，关联关键字 <strong>_SPECULAR_SETUP</strong>。</p>
+<ul>
+<li>类型范围：float类型，数值为0 或 1。</li>
+<li>数值含义：<ul>
+<li>0：使用高光工作流，脚本开启关键字 <strong>_SPECULAR_SETUP</strong>。</li>
+<li>1：使用金属工作流，脚本关闭关键字 <strong>_SPECULAR_SETUP</strong>。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>_BaseMap</strong>：主帖图。</p>
+<ul>
+<li>类型：2D，默认白色贴图。</li>
+<li>数值含义：是我们经常使用的albedo贴图，代码物体的反照率颜色，通俗讲就是物体本身的基础色。</li>
+</ul>
+</li>
+<li><p><strong>_BaseColor</strong>：主颜色。</p>
+<ul>
+<li>类型：Color，默认白色。</li>
+<li>数值含义：用于调节反照率，一般与采样 <strong>_BaseMap</strong> 后的颜色进行相乘获取最终的反照率。</li>
+</ul>
+</li>
+<li><p><strong>_Cutoff</strong>：用于透明度裁剪。</p>
+<ul>
+<li>数值范围：float 类型，范围0~1。</li>
+<li>数值含义：在需要AlphaTest中可以作为参数使用，因为不透明物体想要做出镂空或者溶解这种效果的话，只能使用透明裁剪。</li>
+</ul>
+</li>
+<li><p><strong>_Smoothness</strong>：光滑度调节值。</p>
+<ul>
+<li>类型范围：float类型，单位0~1。</li>
+<li>数值含义：控制光滑度的强度。</li>
+</ul>
+</li>
+<li><p><strong>_SmoothnessTextureChannel</strong>：光滑度数值存放在哪张贴图的通道中，关联的Shader关键字 <strong>_SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A</strong>。</p>
+<ul>
+<li><p>类型范围：float类型，数值为0 或 1。</p>
+</li>
+<li><p>数值含义：</p>
+<ul>
+<li>0：贴图的光滑度存在于金属度贴图或者高光贴图的Alpha通道中，脚本关闭关键字 <strong>_SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A</strong>。</li>
+<li>1：贴图的光滑度存在于 <strong>_BaseMap</strong> 贴图的Alpha通道中，脚本开启关键字 <strong>_SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A</strong>。</li>
+</ul>
+</li>
+<li><details><summary> <font color="#007ACC">🐍 _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A关键字开启与关闭的具体代码 </font></summary>
+
+<pre><code class="language-c#">if (material.HasProperty(&quot;_SmoothnessTextureChannel&quot;))
+&#123;
+    var opaque = IsOpaque(material);
+    CoreUtils.SetKeyword(material, &quot;_SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A&quot;,
+        GetSmoothnessMapChannel(material) == SmoothnessMapChannel.AlbedoAlpha &amp;&amp; opaque);
+&#125;
+</code></pre>
+<pre><code class="language-c#">/// &lt;summary&gt;
+/// Retrieves the alpha channel used for smoothness.
+/// &lt;/summary&gt;
+/// &lt;param name=&quot;material&quot;&gt;&lt;/param&gt;
+/// &lt;returns&gt;The Alpha channel used for Smoothness.&lt;/returns&gt;
+public static SmoothnessMapChannel GetSmoothnessMapChannel(Material material)
+&#123;
+    int ch = (int)material.GetFloat(&quot;_SmoothnessTextureChannel&quot;);
+    if (ch == (int)SmoothnessMapChannel.AlbedoAlpha)
+        return SmoothnessMapChannel.AlbedoAlpha;
+
+    return SmoothnessMapChannel.SpecularMetallicAlpha;
+&#125;
+</code></pre>
+<pre><code class="language-c#">/// &lt;summary&gt;
+/// Options to select the texture channel where the smoothness value is stored.
+/// &lt;/summary&gt;
+public enum SmoothnessMapChannel
+&#123;
+    /// &lt;summary&gt;
+    /// Use this when smoothness is stored in the alpha channel of the Specular/Metallic Map.
+    /// &lt;/summary&gt;
+    SpecularMetallicAlpha,
+
+    /// &lt;summary&gt;
+    /// Use this when smoothness is stored in the alpha channel of the Albedo Map.
+    /// &lt;/summary&gt;
+    AlbedoAlpha,
+&#125;
+</code></pre>
+</details>
+</li>
+<li><details><summary> <font color="#007ACC">🐍 _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A关键字在Shader中的具体运用 </font></summary>
+
+<pre><code class="language-hlsl">half4 SampleMetallicSpecGloss(float2 uv, half albedoAlpha)
+&#123;
+    half4 specGloss;
+
+#ifdef _METALLICSPECGLOSSMAP
+    specGloss = half4(SAMPLE_METALLICSPECULAR(uv));
+    #ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+        specGloss.a = albedoAlpha * _Smoothness;
+    #else
+        specGloss.a *= _Smoothness;
+    #endif
+#else // _METALLICSPECGLOSSMAP
+    #if _SPECULAR_SETUP
+        specGloss.rgb = _SpecColor.rgb;
+    #else
+        specGloss.rgb = _Metallic.rrr;
+    #endif
+
+    #ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+        specGloss.a = albedoAlpha * _Smoothness;
+    #else
+        specGloss.a = _Smoothness;
+    #endif
+#endif
+
+    return specGloss;
+&#125;
+</code></pre>
+<blockquote>
+<p>可以看到 <strong>specGloss.a</strong> 存放的就是光滑度的值，要么采样Albedo贴图的Alpha通道，要么就是采样金属或者高光贴图的Alpha通道，这只是Unity URP LitShader存放光滑度的一种方式而已，如果是自定义代码，也不是必须按照这样方式存储。</p>
+</blockquote>
+</details></li>
+</ul>
+</li>
+<li><p><strong>_Metallic</strong>：金属度调节值。</p>
+<ul>
+<li>类型范围：float类型，单位0~1。</li>
+<li>数值含义：控制金属度的强度。</li>
+</ul>
+</li>
+<li><p><strong>_MetallicGlossMap</strong>：金属度调节值。</p>
+<ul>
+<li><p>类型：2D，默认白色贴图。</p>
+</li>
+<li><p>数值含义：金属度光泽贴图，只有存在贴图并且启用金属工作流的时候才会存在颜色。</p>
+</li>
+<li><details><summary> <font color="#007ACC">🐍 相关Shader功能代码 </font></summary>
+
+<pre><code class="language-hlsl">#ifdef _SPECULAR_SETUP
+    #define SAMPLE_METALLICSPECULAR(uv) SAMPLE_TEXTURE2D(_SpecGlossMap, sampler_SpecGlossMap, uv)
+#else
+    #define SAMPLE_METALLICSPECULAR(uv) SAMPLE_TEXTURE2D(_MetallicGlossMap, sampler_MetallicGlossMap, uv)
+#endif
+
+half4 SampleMetallicSpecGloss(float2 uv, half albedoAlpha)
+&#123;
+    half4 specGloss;
+
+#ifdef _METALLICSPECGLOSSMAP
+    specGloss = half4(SAMPLE_METALLICSPECULAR(uv));
+    #ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+        specGloss.a = albedoAlpha * _Smoothness;
+    #else
+        specGloss.a *= _Smoothness;
+    #endif
+#else // _METALLICSPECGLOSSMAP
+    #if _SPECULAR_SETUP
+        specGloss.rgb = _SpecColor.rgb;
+    #else
+        specGloss.rgb = _Metallic.rrr;
+    #endif
+
+    #ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+        specGloss.a = albedoAlpha * _Smoothness;
+    #else
+        specGloss.a = _Smoothness;
+    #endif
+#endif
+
+    return specGloss;
+&#125;
+</code></pre>
+<blockquote>
+<p>可以看到只有是金属工作流的时候，<strong>SAMPLE_METALLICSPECULAR</strong> 函数是采样的 <strong>_MetallicGlossMap</strong> 贴图，同时要使用贴图颜色，要开启关键字 <strong>_METALLICSPECGLOSSMAP</strong> ，这个关键字就是在编辑器代码中开启的。</p>
+</blockquote>
+</details>
+</li>
+<li><details><summary> <font color="#007ACC">🐍 _METALLICSPECGLOSSMAP关键字开启与关闭代码 </font></summary>
+
+<pre><code class="language-c#">var specularGlossMap = isSpecularWorkFlow ? &quot;_SpecGlossMap&quot; : &quot;_MetallicGlossMap&quot;;
+var hasGlossMap = material.GetTexture(specularGlossMap) != null;
+CoreUtils.SetKeyword(material, &quot;_METALLICSPECGLOSSMAP&quot;, hasGlossMap);
+</code></pre>
+</details></li>
+</ul>
+</li>
+<li><p><strong>_SpecColor</strong>：高光颜色。</p>
+<ul>
+<li>类型：Color，默认白色。</li>
+<li>数值含义：决定高光反射的基础颜色。</li>
+</ul>
+</li>
+<li><p><strong>_SpecGlossMap</strong>：高光颜色。</p>
+<ul>
+<li>类型：2D，默认白色贴图。</li>
+<li>数值含义：决定高光反射的基础颜色。</li>
+<li><details><summary> <font color="#007ACC">🐍 _SpecColor,_SpecGlossMap,_Metallic,_MetallicGlossMap的一些关系计算 </font></summary>
+
+<pre><code class="language-hlsl">#ifdef _SPECULAR_SETUP
+    #define SAMPLE_METALLICSPECULAR(uv) SAMPLE_TEXTURE2D(_SpecGlossMap, sampler_SpecGlossMap, uv)
+#else
+    #define SAMPLE_METALLICSPECULAR(uv) SAMPLE_TEXTURE2D(_MetallicGlossMap, sampler_MetallicGlossMap, uv)
+#endif
+
+half4 SampleMetallicSpecGloss(float2 uv, half albedoAlpha)
+&#123;
+    half4 specGloss;
+
+#ifdef _METALLICSPECGLOSSMAP
+    specGloss = half4(SAMPLE_METALLICSPECULAR(uv));
+    #ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+        specGloss.a = albedoAlpha * _Smoothness;
+    #else
+        specGloss.a *= _Smoothness;
+    #endif
+#else // _METALLICSPECGLOSSMAP
+    #if _SPECULAR_SETUP
+        specGloss.rgb = _SpecColor.rgb;
+    #else
+        specGloss.rgb = _Metallic.rrr;
+    #endif
+
+    #ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+        specGloss.a = albedoAlpha * _Smoothness;
+    #else
+        specGloss.a = _Smoothness;
+    #endif
+#endif
+
+    return specGloss;
+&#125;
+</code></pre>
+<blockquote>
+<p>可以看到实际上这四个参数被分为了两类， <strong>_SpecColor</strong> 与 <strong>_SpecGlossMap</strong> 为一组，<strong>_Metallic</strong> 与 <strong>_MetallicGlossMap</strong> 为一组，这两组分别对应高光工作流与金属工作流。其中这两种工作流又分为有贴图和没有贴图时的数值为多少，有贴图的时候就采样贴图，没贴图的时候就设置对应的颜色，其中需要注意的是金属工作流没有贴图时高光颜色给的是 <strong>_Metallic</strong> 的灰度颜色。</p>
+</blockquote>
+</details></li>
+</ul>
+</li>
+<li><p><strong>_SpecularHighlights</strong>: 高光开关，关联关键字 <strong>_SPECULARHIGHLIGHTS_OFF</strong>。</p>
+<ul>
+<li>类型范围：float，拥有[ToggleOff]标签，是个开关，数值为 0 或 1。</li>
+<li>数值含义：决定高光是否关闭。<ul>
+<li>0：关闭高光，脚本开启关键字 <strong>_SPECULARHIGHLIGHTS_OFF</strong>。</li>
+<li>1：开启高光，脚本关闭关键字 <strong>_SPECULARHIGHLIGHTS_OFF</strong>。</li>
+</ul>
+</li>
+<li><details><summary> <font color="#007ACC">🐍 编辑器脚本开启与关闭_SPECULARHIGHLIGHTS_OFF关键字代码 </font></summary>
+
+<pre><code class="language-c#">if (material.HasProperty(&quot;_SpecularHighlights&quot;))
+CoreUtils.SetKeyword(material, &quot;_SPECULARHIGHLIGHTS_OFF&quot;,
+    material.GetFloat(&quot;_SpecularHighlights&quot;) == 0.0f);
+</code></pre>
+</details></li>
+<li><details><summary> <font color="#007ACC">🐍 Shader中有关_SpecularHighlights的代码 </font></summary>
+
+在 <strong>UniversalFragmentPBR</strong> 一开始就进行了 <strong>specularHighlightsOff</strong> 变量的声明：<br><img src="/images/post/URPLit/1.png"><br>定位可以看到这个变量用在了 <strong>LightingPhysicallyBased</strong> 函数中。<pre><code class="language-hlsl">half3 LightingPhysicallyBased(BRDFData brdfData, BRDFData brdfDataClearCoat,
+half3 lightColor, half3 lightDirectionWS, half lightAttenuation,
+half3 normalWS, half3 viewDirectionWS,
+half clearCoatMask, bool specularHighlightsOff)
+&#123;
+    half NdotL = saturate(dot(normalWS, lightDirectionWS));
+    half3 radiance = lightColor * (lightAttenuation * NdotL);
+
+    half3 brdf = brdfData.diffuse;
+#ifndef _SPECULARHIGHLIGHTS_OFF
+    [branch] if (!specularHighlightsOff)
+    &#123;
+        brdf += brdfData.specular * DirectBRDFSpecular(brdfData, normalWS, lightDirectionWS, viewDirectionWS);
+
+#if defined(_CLEARCOAT) || defined(_CLEARCOATMAP)
+        // Clear coat evaluates the specular a second timw and has some common terms with the base specular.
+        // We rely on the compiler to merge these and compute them only once.
+        half brdfCoat = kDielectricSpec.r * DirectBRDFSpecular(brdfDataClearCoat, normalWS, lightDirectionWS, viewDirectionWS);
+
+            // Mix clear coat and base layer using khronos glTF recommended formula
+            // https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_materials_clearcoat/README.md
+            // Use NoV for direct too instead of LoH as an optimization (NoV is light invariant).
+            half NoV = saturate(dot(normalWS, viewDirectionWS));
+            // Use slightly simpler fresnelTerm (Pow4 vs Pow5) as a small optimization.
+            // It is matching fresnel used in the GI/Env, so should produce a consistent clear coat blend (env vs. direct)
+            half coatFresnel = kDielectricSpec.x + kDielectricSpec.a * Pow4(1.0 - NoV);
+
+        brdf = brdf * (1.0 - clearCoatMask * coatFresnel) + brdfCoat * clearCoatMask;
+#endif // _CLEARCOAT
+    &#125;
+#endif // _SPECULARHIGHLIGHTS_OFF
+
+    return brdf * radiance;
+&#125;
+</code></pre>
+<blockquote>
+<p>可以看到 <strong>LightingPhysicallyBased</strong> 中又判断了关键字 <strong>_SPECULARHIGHLIGHTS_OFF</strong> 的定义，然后还使用了布尔变量 <strong>specularHighlightsOff</strong>，简直是脱裤子放屁多此一举，不知道Unity为什么要这么做。</p>
+</blockquote>
+</details></li>
+</ul>
+</li>
+<li><p><strong>_EnvironmentReflections</strong>：环境反射，关联关键字 <strong>_ENVIRONMENTREFLECTIONS_OFF</strong>。</p>
+<ul>
+<li><p>类型范围：float，拥有[ToggleOff]标签，是个开关，数值为 0 或 1。</p>
+</li>
+<li><p>数值含义：决定环境反射是否关闭。</p>
+<ul>
+<li>0：关闭环境反射，脚本开启关键字 <strong>_ENVIRONMENTREFLECTIONS_OFF</strong>。</li>
+<li>1：开启环境反射，脚本关闭关键字 <strong>_ENVIRONMENTREFLECTIONS_OFF</strong>。</li>
+</ul>
+</li>
+<li><details><summary> <font color="#007ACC">🐍 编辑器脚本开启与关闭_ENVIRONMENTREFLECTIONS_OFF关键字代码 </font></summary>
+
+<pre><code class="language-c#">if (material.HasProperty(&quot;_EnvironmentReflections&quot;))
+    CoreUtils.SetKeyword(material, &quot;_ENVIRONMENTREFLECTIONS_OFF&quot;,
+        material.GetFloat(&quot;_EnvironmentReflections&quot;) == 0.0f);
+</code></pre>
+</details>   </li>
+<li><details><summary> <font color="#007ACC">🐍 Shader中有关_EnvironmentReflections的代码 </font></summary>
+
+<pre><code class="language-hlsl">half3 GlossyEnvironmentReflection(half3 reflectVector, float3 positionWS, half perceptualRoughness, half occlusion, float2 normalizedScreenSpaceUV)
+&#123;
+#if !defined(_ENVIRONMENTREFLECTIONS_OFF)
+    half3 irradiance;
+
+#if defined(_REFLECTION_PROBE_BLENDING) || USE_FORWARD_PLUS
+    irradiance = CalculateIrradianceFromReflectionProbes(reflectVector, positionWS, perceptualRoughness, normalizedScreenSpaceUV);
+#else
+#ifdef _REFLECTION_PROBE_BOX_PROJECTION
+    reflectVector = BoxProjectedCubemapDirection(reflectVector, positionWS, unity_SpecCube0_ProbePosition, unity_SpecCube0_BoxMin, unity_SpecCube0_BoxMax);
+#endif // _REFLECTION_PROBE_BOX_PROJECTION
+    half mip = PerceptualRoughnessToMipmapLevel(perceptualRoughness);
+    half4 encodedIrradiance = half4(SAMPLE_TEXTURECUBE_LOD(unity_SpecCube0, samplerunity_SpecCube0, reflectVector, mip));
+
+    irradiance = DecodeHDREnvironment(encodedIrradiance, unity_SpecCube0_HDR);
+#endif // _REFLECTION_PROBE_BLENDING
+    return irradiance * occlusion;
+#else
+    return _GlossyEnvironmentColor.rgb * occlusion;
+#endif // _ENVIRONMENTREFLECTIONS_OFF
+&#125;
+
+#if !USE_FORWARD_PLUS
+half3 GlossyEnvironmentReflection(half3 reflectVector, float3 positionWS, half perceptualRoughness, half occlusion)
+&#123;
+    return GlossyEnvironmentReflection(reflectVector, positionWS, perceptualRoughness, occlusion, float2(0.0f, 0.0f));
+&#125;
+#endif
+
+half3 GlossyEnvironmentReflection(half3 reflectVector, half perceptualRoughness, half occlusion)
+&#123;
+#if !defined(_ENVIRONMENTREFLECTIONS_OFF)
+    half3 irradiance;
+    half mip = PerceptualRoughnessToMipmapLevel(perceptualRoughness);
+    half4 encodedIrradiance = half4(SAMPLE_TEXTURECUBE_LOD(unity_SpecCube0, samplerunity_SpecCube0, reflectVector, mip));
+
+    irradiance = DecodeHDREnvironment(encodedIrradiance, unity_SpecCube0_HDR);
+
+    return irradiance * occlusion;
+#else
+
+    return _GlossyEnvironmentColor.rgb * occlusion;
+#endif // _ENVIRONMENTREFLECTIONS_OFF
+&#125;
+</code></pre>
+<p>两个方法都很明显，是对环境高光反射的计算，而且它们在没有开启环境反射的情况下，都返回内置的环境高光颜色 <strong>_GlossyEnvironmentColor</strong>。而开启环境高光，他们的区别就在于第一个函数多了反射探针的计算。</p>
+<ul>
+<li><strong>USE_FORWARD_PLUS</strong> 是前向渲染预定义，它的定义代码如下：<pre><code class="language-hlsl">#if defined(_FORWARD_PLUS)
+#define _ADDITIONAL_LIGHTS 1
+#undef _ADDITIONAL_LIGHTS_VERTEX
+#define USE_FORWARD_PLUS 1
+#else
+#define USE_FORWARD_PLUS 0
+#endif
+</code></pre>
+</li>
+<li><strong>_REFLECTION_PROBE_BLENDING</strong>：反射探针混合关键字，作用是多个反射探针叠加。<ul>
+<li><strong>CalculateIrradianceFromReflectionProbes</strong>：计算混合后的反射探针辐照度。</li>
+</ul>
+</li>
+<li><strong>_REFLECTION_PROBE_BOX_PROJECTION</strong>：反射探针盒型投影关键字，作用是但反射探针采样。<ul>
+<li><strong>BoxProjectedCubemapDirection</strong>：修正反射方向向量，让反射探针的采样结果贴合场景中的 “盒子” 范围，避免反射探针在盒子外采样错误，提升反射的空间准确性。</li>
+<li><strong>unity_SpecCube0_ProbePosition</strong>：第一个反射探针的世界空间位置。</li>
+<li><strong>unity_SpecCube0_BoxMin&#x2F;BoxMax</strong>：反射探针盒式投影的最小 &#x2F; 最大边界。</li>
+</ul>
+</li>
+<li><strong>PerceptualRoughnessToMipmapLevel</strong>：将感知粗糙度转换为立方体贴图的 Mip 层级，粗糙度越高，Mip 层级越大，采样越模糊的层级，符合物理规律。</li>
+<li><strong>SAMPLE_TEXTURECUBE_LOD</strong>： 采样立方体贴图（反射探针的纹理 <strong>unity_SpecCube0</strong> ），指定 Mip 层级 <strong>mip</strong>，得到编码后的 HDR 反射颜色。</li>
+<li><strong>DecodeHDREnvironment</strong>：解码 HDR 格式的环境色（Unity 反射探针默认用 RGBM 等格式压缩 HDR 数据），<strong>unity_SpecCube0_HDR</strong> 是解码所需的 HDR 参数。</li>
+</ul>
+</details></li>
+</ul>
+</li>
+<li><p><strong>_BumpScale</strong>：法线缩放。</p>
+<ul>
+<li>类型范围：float类型，默认1。</li>
+<li>数值含义：控制法线的强度。</li>
+</ul>
+</li>
+<li><p><strong>_BumpMap</strong>：法线。</p>
+<ul>
+<li>类型：2D，默认法线贴图。</li>
+<li>数值含义：给予法线。</li>
+</ul>
+</li>
+<li><p><strong>_Parallax</strong>：视差缩放。</p>
+<ul>
+<li>类型：float类型，范围0.005~0.08，默认0.005。</li>
+<li>数值含义：控制视差强度。</li>
+</ul>
+</li>
+<li><p><strong>_ParallaxMap</strong>：视差图。</p>
+<ul>
+<li>类型：2D，默认黑色贴图。</li>
+<li>数值含义：给予视差高度数据。</li>
+</ul>
+</li>
+<li><p><strong>_OcclusionStrength</strong>：遮蔽强度。</p>
+<ul>
+<li>类型：float类型，范围0~1，默认1。</li>
+<li>数值含义：控制遮蔽强度。</li>
+</ul>
+</li>
+<li><p><strong>_OcclusionMap</strong>：遮蔽遮罩图。</p>
+<ul>
+<li>类型：2D，默认白色贴图。</li>
+<li>数值含义：给予哪些地方有遮蔽数据。</li>
+</ul>
+</li>
+<li><p><strong>_EmissionColor</strong>：自发光颜色。</p>
+<ul>
+<li>类型：Color，HDR颜色，默认白色。</li>
+<li>数值含义：控制自发光的颜色。</li>
+</ul>
+</li>
+<li><p><strong>_EmissionMap</strong>：自发光遮罩图。</p>
+<ul>
+<li>类型：2D，默认白色贴图。</li>
+<li>数值含义：给予哪些地方有自发光数据。</li>
+</ul>
+</li>
+<li><p><strong>_DetailMask</strong>：细节遮罩。</p>
+<ul>
+<li>类型：2D，默认白色贴图。</li>
+<li>数值含义：给予哪些地方有细节颜色数据，遮罩图。</li>
+</ul>
+</li>
+<li><p><strong>_DetailAlbedoMapScale</strong>：细节反照率贴图强度。</p>
+<ul>
+<li>类型：float类型，范围0~2，默认1。</li>
+<li>数值含义：控制细节贴图反照率颜色的强度，0的时候就是不会显示细节贴图。</li>
+</ul>
+</li>
+<li><p><strong>_DetailAlbedoMap</strong>：细节基础颜色图。</p>
+<ul>
+<li>类型：2D，默认线性灰贴图。</li>
+<li>数值含义：给予细节贴图的反照率颜色数据。</li>
+</ul>
+</li>
+<li><p><strong>_DetailNormalMapScale</strong>：细节贴图法线强度。</p>
+<ul>
+<li>类型：float类型，范围0~2，默认1。</li>
+<li>数值含义：控制细节贴图法线的强度。</li>
+</ul>
+</li>
+<li><p><strong>_DetailNormalMap</strong>：细节法线图。</p>
+<ul>
+<li>类型：2D，默认法线贴图。</li>
+<li>数值含义：给予细节的法线数据。</li>
+</ul>
+</li>
+<li><p>因为清漆在Lit中并未使用，所以 <strong>_ClearCoatMask</strong> 和 <strong>_ClearCoatSmoothness</strong> 不作解释，后续关于清晰的Shader代码也会被忽略不进行解释。</p>
+</li>
+<li><p><strong>_Surface</strong>: Shader表面类型。</p>
+<ul>
+<li>类型范围：float类型，值为 0 或 1，默认0。</li>
+<li>数值含义：给予细节的法线数据。</li>
+<li>0：不透明物体。</li>
+<li>1：透明物体。</li>
+</ul>
+</li>
+</ul>
+<p>&emsp;剩下就是混合设置和深度设置这些了，就不再过多解释，剩余未解释属性：</p>
+<pre><code class="language-hlsl">_Blend(&quot;__blend&quot;, Float) = 0.0
+_Cull(&quot;__cull&quot;, Float) = 2.0
+[ToggleUI] _AlphaClip(&quot;__clip&quot;, Float) = 0.0
+[HideInInspector] _SrcBlend(&quot;__src&quot;, Float) = 1.0
+[HideInInspector] _DstBlend(&quot;__dst&quot;, Float) = 0.0
+[HideInInspector] _SrcBlendAlpha(&quot;__srcA&quot;, Float) = 1.0
+[HideInInspector] _DstBlendAlpha(&quot;__dstA&quot;, Float) = 0.0
+[HideInInspector] _ZWrite(&quot;__zw&quot;, Float) = 1.0
+[HideInInspector] _BlendModePreserveSpecular(&quot;_BlendModePreserveSpecular&quot;, Float) = 1.0
+[HideInInspector] _AlphaToMask(&quot;__alphaToMask&quot;, Float) = 0.0
+</code></pre>
+<p><strong>_ReceiveShadows</strong> 也不用多说，<strong>_QueueOffset</strong> 是存在编辑模式下的参数，用于控制渲染队列的，使用的是编辑器代码，在Shader中并无什么操作。</p>
+<p>&emsp;下面的是过时参数，用于兼容的：</p>
+<pre><code class="language-hlsl">// ObsoleteProperties
+[HideInInspector] _MainTex(&quot;BaseMap&quot;, 2D) = &quot;white&quot; &#123;&#125;
+[HideInInspector] _Color(&quot;Base Color&quot;, Color) = (1, 1, 1, 1)
+[HideInInspector] _GlossMapScale(&quot;Smoothness&quot;, Float) = 0.0
+[HideInInspector] _Glossiness(&quot;Smoothness&quot;, Float) = 0.0
+[HideInInspector] _GlossyReflections(&quot;EnvironmentReflections&quot;, Float) = 0.0
+
+[HideInInspector][NoScaleOffset]unity_Lightmaps(&quot;unity_Lightmaps&quot;, 2DArray) = &quot;&quot; &#123;&#125;
+[HideInInspector][NoScaleOffset]unity_LightmapsInd(&quot;unity_LightmapsInd&quot;, 2DArray) = &quot;&quot; &#123;&#125;
+[HideInInspector][NoScaleOffset]unity_ShadowMasks(&quot;unity_ShadowMasks&quot;, 2DArray) = &quot;&quot; &#123;&#125;
+</code></pre>
+<details><summary> <font color="#007ACC">🐍 编辑器脚本中混合设置代码 </font></summary>
+
+<pre><code class="language-c#">internal static void SetupMaterialBlendModeInternal(Material material, out int automaticRenderQueue)
+&#123;
+    if (material == null)
+        throw new ArgumentNullException(&quot;material&quot;);
+
+    bool alphaClip = false;
+    if (material.HasProperty(Property.AlphaClip))
+        alphaClip = material.GetFloat(Property.AlphaClip) &gt;= 0.5;
+    CoreUtils.SetKeyword(material, ShaderKeywordStrings._ALPHATEST_ON, alphaClip);
+
+    // default is to use the shader render queue
+    int renderQueue = material.shader.renderQueue;
+    material.SetOverrideTag(&quot;RenderType&quot;, &quot;&quot;);      // clear override tag
+    if (material.HasProperty(Property.SurfaceType))
+    &#123;
+        SurfaceType surfaceType = (SurfaceType)material.GetFloat(Property.SurfaceType);
+        bool zwrite = false;
+        CoreUtils.SetKeyword(material, ShaderKeywordStrings._SURFACE_TYPE_TRANSPARENT, surfaceType == SurfaceType.Transparent);
+        bool alphaToMask = false;
+        if (surfaceType == SurfaceType.Opaque)
+        &#123;
+            if (alphaClip)
+            &#123;
+                renderQueue = (int)RenderQueue.AlphaTest;
+                material.SetOverrideTag(&quot;RenderType&quot;, &quot;TransparentCutout&quot;);
+                alphaToMask = true;
+            &#125;
+            else
+            &#123;
+                renderQueue = (int)RenderQueue.Geometry;
+                material.SetOverrideTag(&quot;RenderType&quot;, &quot;Opaque&quot;);
+            &#125;
+
+            SetMaterialSrcDstBlendProperties(material, UnityEngine.Rendering.BlendMode.One, UnityEngine.Rendering.BlendMode.Zero);
+            zwrite = true;
+            material.DisableKeyword(ShaderKeywordStrings._ALPHAPREMULTIPLY_ON);
+            material.DisableKeyword(ShaderKeywordStrings._ALPHAMODULATE_ON);
+        &#125;
+        else // SurfaceType Transparent
+        &#123;
+            BlendMode blendMode = (BlendMode)material.GetFloat(Property.BlendMode);
+
+            var srcBlendRGB = UnityEngine.Rendering.BlendMode.One;
+            var dstBlendRGB = UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha;
+            var srcBlendA = UnityEngine.Rendering.BlendMode.One;
+            var dstBlendA = UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha;
+
+            // Specific Transparent Mode Settings
+            switch (blendMode)
+            &#123;
+                // srcRGB * srcAlpha + dstRGB * (1 - srcAlpha)
+                // preserve spec:
+                // srcRGB * (&lt;in shader&gt; ? 1 : srcAlpha) + dstRGB * (1 - srcAlpha)
+                case BlendMode.Alpha:
+                    srcBlendRGB = UnityEngine.Rendering.BlendMode.SrcAlpha;
+                    dstBlendRGB = UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha;
+                    srcBlendA = UnityEngine.Rendering.BlendMode.One;
+                    dstBlendA = dstBlendRGB;
+                    break;
+
+                // srcRGB &lt; srcAlpha, (alpha multiplied in asset)
+                // srcRGB * 1 + dstRGB * (1 - srcAlpha)
+                case BlendMode.Premultiply:
+                    srcBlendRGB = UnityEngine.Rendering.BlendMode.One;
+                    dstBlendRGB = UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha;
+                    srcBlendA = srcBlendRGB;
+                    dstBlendA = dstBlendRGB;
+                    break;
+
+                // srcRGB * srcAlpha + dstRGB * 1, (alpha controls amount of addition)
+                // preserve spec:
+                // srcRGB * (&lt;in shader&gt; ? 1 : srcAlpha) + dstRGB * (1 - srcAlpha)
+                case BlendMode.Additive:
+                    srcBlendRGB = UnityEngine.Rendering.BlendMode.SrcAlpha;
+                    dstBlendRGB = UnityEngine.Rendering.BlendMode.One;
+                    srcBlendA = UnityEngine.Rendering.BlendMode.One;
+                    dstBlendA = dstBlendRGB;
+                    break;
+
+                // srcRGB * 0 + dstRGB * srcRGB
+                // in shader alpha controls amount of multiplication, lerp(1, srcRGB, srcAlpha)
+                // Multiply affects color only, keep existing alpha.
+                case BlendMode.Multiply:
+                    srcBlendRGB = UnityEngine.Rendering.BlendMode.DstColor;
+                    dstBlendRGB = UnityEngine.Rendering.BlendMode.Zero;
+                    srcBlendA = UnityEngine.Rendering.BlendMode.Zero;
+                    dstBlendA = UnityEngine.Rendering.BlendMode.One;
+                    break;
+            &#125;
+
+            // Lift alpha multiply from ROP to shader by setting pre-multiplied _SrcBlend mode.
+            // The intent is to do different blending for diffuse and specular in shader.
+            // ref: http://advances.realtimerendering.com/other/2016/naughty_dog/NaughtyDog_TechArt_Final.pdf
+            bool preserveSpecular = (material.HasProperty(Property.BlendModePreserveSpecular) &amp;&amp;
+                                        material.GetFloat(Property.BlendModePreserveSpecular) &gt; 0) &amp;&amp;
+                                    blendMode != BlendMode.Multiply &amp;&amp; blendMode != BlendMode.Premultiply;
+            if (preserveSpecular)
+            &#123;
+                srcBlendRGB = UnityEngine.Rendering.BlendMode.One;
+            &#125;
+
+            // When doing off-screen transparency accumulation, we change blend factors as described here: https://developer.nvidia.com/gpugems/GPUGems3/gpugems3_ch23.html
+            bool offScreenAccumulateAlpha = false;
+            if (offScreenAccumulateAlpha)
+                srcBlendA = UnityEngine.Rendering.BlendMode.Zero;
+
+            SetMaterialSrcDstBlendProperties(material, srcBlendRGB, dstBlendRGB, // RGB
+                srcBlendA, dstBlendA); // Alpha
+
+            CoreUtils.SetKeyword(material, ShaderKeywordStrings._ALPHAPREMULTIPLY_ON, preserveSpecular);
+            CoreUtils.SetKeyword(material, ShaderKeywordStrings._ALPHAMODULATE_ON, blendMode == BlendMode.Multiply);
+
+            // General Transparent Material Settings
+            material.SetOverrideTag(&quot;RenderType&quot;, &quot;Transparent&quot;);
+            zwrite = false;
+            renderQueue = (int)RenderQueue.Transparent;
+        &#125;
+
+        if (material.HasProperty(Property.AlphaToMask))
+        &#123;
+            material.SetFloat(Property.AlphaToMask, alphaToMask ? 1.0f : 0.0f);
+        &#125;
+
+        // check for override enum
+        if (material.HasProperty(Property.ZWriteControl))
+        &#123;
+            var zwriteControl = (UnityEditor.Rendering.Universal.ShaderGraph.ZWriteControl)material.GetFloat(Property.ZWriteControl);
+            if (zwriteControl == UnityEditor.Rendering.Universal.ShaderGraph.ZWriteControl.ForceEnabled)
+                zwrite = true;
+            else if (zwriteControl == UnityEditor.Rendering.Universal.ShaderGraph.ZWriteControl.ForceDisabled)
+                zwrite = false;
+        &#125;
+        SetMaterialZWriteProperty(material, zwrite);
+        material.SetShaderPassEnabled(&quot;DepthOnly&quot;, zwrite);
+    &#125;
+    else
+    &#123;
+        // no surface type property -- must be hard-coded by the shadergraph,
+        // so ensure the pass is enabled at the material level
+        material.SetShaderPassEnabled(&quot;DepthOnly&quot;, true);
+    &#125;
+
+    // must always apply queue offset, even if not set to material control
+    if (material.HasProperty(Property.QueueOffset))
+        renderQueue += (int)material.GetFloat(Property.QueueOffset);
+
+    automaticRenderQueue = renderQueue;
+&#125;
+</code></pre>
+</details> 
+
+<hr>
+<h1 id="着色器声明"><a href="#着色器声明" class="headerlink" title="着色器声明"></a>着色器声明</h1><p>&emsp;这是声明顶点着色器和片源着色器，具体的代码可以在 <strong>LitForwardPass.hlsl</strong> 文件中找到，之后会具体详解。</p>
+<pre><code class="language-hlsl">#pragma vertex LitPassVertex
+#pragma fragment LitPassFragment
+</code></pre>
+<hr>
+<h1 id="关键字声明"><a href="#关键字声明" class="headerlink" title="关键字声明"></a>关键字声明</h1><pre><code class="language-hlsl">// Material Keywords
+#pragma shader_feature_local _NORMALMAP     //法线图关键字
+#pragma shader_feature_local _PARALLAXMAP   //视差高度图关键字
+#pragma shader_feature_local _RECEIVE_SHADOWS_OFF   //关闭接收阴影关键字
+#pragma shader_feature_local _ _DETAIL_MULX2 _DETAIL_SCALED //细节贴图缩放关键字，一个是2被缩放，一个是自定义缩放
+#pragma shader_feature_local_fragment _SURFACE_TYPE_TRANSPARENT //表面类型是透明物体的关键字
+#pragma shader_feature_local_fragment _ALPHATEST_ON     //AlphTest开启关键字，用于透明度裁剪
+#pragma shader_feature_local_fragment _ _ALPHAPREMULTIPLY_ON _ALPHAMODULATE_ON      //alpha混合颜色关键字
+#pragma shader_feature_local_fragment _EMISSION     //自发光
+#pragma shader_feature_local_fragment _METALLICSPECGLOSSMAP     //金属和高光定义贴图关键字
+#pragma shader_feature_local_fragment _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A      //光滑度数据是否存放在Albedo贴图的A通道关键字
+#pragma shader_feature_local_fragment _OCCLUSIONMAP     //遮蔽贴图
+#pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF   //高光关闭关键字
+#pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF   //环境反射关闭关键字
+#pragma shader_feature_local_fragment _SPECULAR_SETUP   //高光工作流关键字
+
+// -------------------------------------
+// Universal Pipeline keywords
+#pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN  //主光阴影关键字
+#pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS    //额外光关键字
+#pragma multi_compile _ EVALUATE_SH_MIXED EVALUATE_SH_VERTEX    //计算球谐光照关键字
+#pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS  //额外光阴影关键字
+#pragma multi_compile_fragment _ _REFLECTION_PROBE_BLENDING     //反射探针混合关键字，多个反射探针叠加效果
+#pragma multi_compile_fragment _ _REFLECTION_PROBE_BOX_PROJECTION   //反射探针盒型投影关键字，单个反射探针采样
+#pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH    //阴影质量关键字
+#pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION    //屏幕AO关键字
+#pragma multi_compile_fragment _ _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3  //DBuffer关键字，贴花使用
+#pragma multi_compile_fragment _ _LIGHT_COOKIES     //LightCookie关键字
+#pragma multi_compile _ _LIGHT_LAYERS       //LightLayer启用关键字
+#pragma multi_compile _ _FORWARD_PLUS   //前向渲染关键字
+
+// Unity defined keywords
+#pragma multi_compile _ LIGHTMAP_SHADOW_MIXING      //LightMap阴影混合关键字
+#pragma multi_compile _ SHADOWS_SHADOWMASK  //ShadowMask关键字
+#pragma multi_compile _ DIRLIGHTMAP_COMBINED    //动态LightMap组合关键字
+#pragma multi_compile _ LIGHTMAP_ON     //开启LightMap关键字
+#pragma multi_compile _ DYNAMICLIGHTMAP_ON      //开启动态LightMap关键字
+#pragma multi_compile_fragment _ LOD_FADE_CROSSFADE     //LOD关键字
+#pragma multi_compile_fog   //雾效关键字
+#pragma multi_compile_fragment _ DEBUG_DISPLAY  //Debug显示关键字
+
+//--------------------------------------
+// GPU Instancing
+#pragma multi_compile_instancing    //GPU实例化关键字
+#pragma instancing_options renderinglayer   //GPU实例化保存renderinglayerMask数据（使得每个实例可以拥有独立的渲染层配置，而非所有实例共享同一个渲染层）
+</code></pre>
+<hr>
+<h1 id="引用Shader库"><a href="#引用Shader库" class="headerlink" title="引用Shader库"></a>引用Shader库</h1><pre><code class="language-hlsl">#include_with_pragmas &quot;Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRenderingKeywords.hlsl&quot;
+#include_with_pragmas &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/RenderingLayers.hlsl&quot;
+#include_with_pragmas &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/DOTS.hlsl&quot;
+
+#include &quot;Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl&quot;
+#include &quot;Packages/com.unity.render-pipelines.universal/Shaders/LitForwardPass.hlsl&quot;
+</code></pre>
+<hr>
+<h1 id="LitInput-hlsl"><a href="#LitInput-hlsl" class="headerlink" title="LitInput.hlsl"></a>LitInput.hlsl</h1><pre><code class="language-hlsl">#ifndef UNIVERSAL_LIT_INPUT_INCLUDED
+#define UNIVERSAL_LIT_INPUT_INCLUDED
+
+#include &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl&quot;
+#include &quot;Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonMaterial.hlsl&quot;
+#include &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/SurfaceInput.hlsl&quot;
+#include &quot;Packages/com.unity.render-pipelines.core/ShaderLibrary/ParallaxMapping.hlsl&quot;
+#include &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/DBuffer.hlsl&quot;
+
+#if defined(_DETAIL_MULX2) || defined(_DETAIL_SCALED)
+#define _DETAIL
+#endif
+
+// NOTE: Do not ifdef the properties here as SRP batcher can not handle different layouts.
+CBUFFER_START(UnityPerMaterial)
+float4 _BaseMap_ST;
+float4 _DetailAlbedoMap_ST;
+half4 _BaseColor;
+half4 _SpecColor;
+half4 _EmissionColor;
+half _Cutoff;
+half _Smoothness;
+half _Metallic;
+half _BumpScale;
+half _Parallax;
+half _OcclusionStrength;
+half _ClearCoatMask;
+half _ClearCoatSmoothness;
+half _DetailAlbedoMapScale;
+half _DetailNormalMapScale;
+half _Surface;
+CBUFFER_END
+
+// NOTE: Do not ifdef the properties for dots instancing, but ifdef the actual usage.
+// Otherwise you might break CPU-side as property constant-buffer offsets change per variant.
+// NOTE: Dots instancing is orthogonal to the constant buffer above.
+#ifdef UNITY_DOTS_INSTANCING_ENABLED
+
+UNITY_DOTS_INSTANCING_START(MaterialPropertyMetadata)
+    UNITY_DOTS_INSTANCED_PROP(float4, _BaseColor)
+    UNITY_DOTS_INSTANCED_PROP(float4, _SpecColor)
+    UNITY_DOTS_INSTANCED_PROP(float4, _EmissionColor)
+    UNITY_DOTS_INSTANCED_PROP(float , _Cutoff)
+    UNITY_DOTS_INSTANCED_PROP(float , _Smoothness)
+    UNITY_DOTS_INSTANCED_PROP(float , _Metallic)
+    UNITY_DOTS_INSTANCED_PROP(float , _BumpScale)
+    UNITY_DOTS_INSTANCED_PROP(float , _Parallax)
+    UNITY_DOTS_INSTANCED_PROP(float , _OcclusionStrength)
+    UNITY_DOTS_INSTANCED_PROP(float , _ClearCoatMask)
+    UNITY_DOTS_INSTANCED_PROP(float , _ClearCoatSmoothness)
+    UNITY_DOTS_INSTANCED_PROP(float , _DetailAlbedoMapScale)
+    UNITY_DOTS_INSTANCED_PROP(float , _DetailNormalMapScale)
+    UNITY_DOTS_INSTANCED_PROP(float , _Surface)
+UNITY_DOTS_INSTANCING_END(MaterialPropertyMetadata)
+
+// Here, we want to avoid overriding a property like e.g. _BaseColor with something like this:
+// #define _BaseColor UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4, _BaseColor0)
+//
+// It would be simpler, but it can cause the compiler to regenerate the property loading code for each use of _BaseColor.
+//
+// To avoid this, the property loads are cached in some static values at the beginning of the shader.
+// The properties such as _BaseColor are then overridden so that it expand directly to the static value like this:
+// #define _BaseColor unity_DOTS_Sampled_BaseColor
+//
+// This simple fix happened to improve GPU performances by ~10% on Meta Quest 2 with URP on some scenes.
+static float4 unity_DOTS_Sampled_BaseColor;
+static float4 unity_DOTS_Sampled_SpecColor;
+static float4 unity_DOTS_Sampled_EmissionColor;
+static float  unity_DOTS_Sampled_Cutoff;
+static float  unity_DOTS_Sampled_Smoothness;
+static float  unity_DOTS_Sampled_Metallic;
+static float  unity_DOTS_Sampled_BumpScale;
+static float  unity_DOTS_Sampled_Parallax;
+static float  unity_DOTS_Sampled_OcclusionStrength;
+static float  unity_DOTS_Sampled_ClearCoatMask;
+static float  unity_DOTS_Sampled_ClearCoatSmoothness;
+static float  unity_DOTS_Sampled_DetailAlbedoMapScale;
+static float  unity_DOTS_Sampled_DetailNormalMapScale;
+static float  unity_DOTS_Sampled_Surface;
+
+void SetupDOTSLitMaterialPropertyCaches()
+&#123;
+    unity_DOTS_Sampled_BaseColor            = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4, _BaseColor);
+    unity_DOTS_Sampled_SpecColor            = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4, _SpecColor);
+    unity_DOTS_Sampled_EmissionColor        = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4, _EmissionColor);
+    unity_DOTS_Sampled_Cutoff               = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _Cutoff);
+    unity_DOTS_Sampled_Smoothness           = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _Smoothness);
+    unity_DOTS_Sampled_Metallic             = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _Metallic);
+    unity_DOTS_Sampled_BumpScale            = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _BumpScale);
+    unity_DOTS_Sampled_Parallax             = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _Parallax);
+    unity_DOTS_Sampled_OcclusionStrength    = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _OcclusionStrength);
+    unity_DOTS_Sampled_ClearCoatMask        = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _ClearCoatMask);
+    unity_DOTS_Sampled_ClearCoatSmoothness  = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _ClearCoatSmoothness);
+    unity_DOTS_Sampled_DetailAlbedoMapScale = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _DetailAlbedoMapScale);
+    unity_DOTS_Sampled_DetailNormalMapScale = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _DetailNormalMapScale);
+    unity_DOTS_Sampled_Surface              = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _Surface);
+&#125;
+
+#undef UNITY_SETUP_DOTS_MATERIAL_PROPERTY_CACHES
+#define UNITY_SETUP_DOTS_MATERIAL_PROPERTY_CACHES() SetupDOTSLitMaterialPropertyCaches()
+
+#define _BaseColor              unity_DOTS_Sampled_BaseColor
+#define _SpecColor              unity_DOTS_Sampled_SpecColor
+#define _EmissionColor          unity_DOTS_Sampled_EmissionColor
+#define _Cutoff                 unity_DOTS_Sampled_Cutoff
+#define _Smoothness             unity_DOTS_Sampled_Smoothness
+#define _Metallic               unity_DOTS_Sampled_Metallic
+#define _BumpScale              unity_DOTS_Sampled_BumpScale
+#define _Parallax               unity_DOTS_Sampled_Parallax
+#define _OcclusionStrength      unity_DOTS_Sampled_OcclusionStrength
+#define _ClearCoatMask          unity_DOTS_Sampled_ClearCoatMask
+#define _ClearCoatSmoothness    unity_DOTS_Sampled_ClearCoatSmoothness
+#define _DetailAlbedoMapScale   unity_DOTS_Sampled_DetailAlbedoMapScale
+#define _DetailNormalMapScale   unity_DOTS_Sampled_DetailNormalMapScale
+#define _Surface                unity_DOTS_Sampled_Surface
+
+#endif
+
+TEXTURE2D(_ParallaxMap);        SAMPLER(sampler_ParallaxMap);
+TEXTURE2D(_OcclusionMap);       SAMPLER(sampler_OcclusionMap);
+TEXTURE2D(_DetailMask);         SAMPLER(sampler_DetailMask);
+TEXTURE2D(_DetailAlbedoMap);    SAMPLER(sampler_DetailAlbedoMap);
+TEXTURE2D(_DetailNormalMap);    SAMPLER(sampler_DetailNormalMap);
+TEXTURE2D(_MetallicGlossMap);   SAMPLER(sampler_MetallicGlossMap);
+TEXTURE2D(_SpecGlossMap);       SAMPLER(sampler_SpecGlossMap);
+TEXTURE2D(_ClearCoatMap);       SAMPLER(sampler_ClearCoatMap);
+
+#ifdef _SPECULAR_SETUP
+    #define SAMPLE_METALLICSPECULAR(uv) SAMPLE_TEXTURE2D(_SpecGlossMap, sampler_SpecGlossMap, uv)
+#else
+    #define SAMPLE_METALLICSPECULAR(uv) SAMPLE_TEXTURE2D(_MetallicGlossMap, sampler_MetallicGlossMap, uv)
+#endif
+
+half4 SampleMetallicSpecGloss(float2 uv, half albedoAlpha)
+&#123;
+    half4 specGloss;
+
+#ifdef _METALLICSPECGLOSSMAP
+    specGloss = half4(SAMPLE_METALLICSPECULAR(uv));
+    #ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+        specGloss.a = albedoAlpha * _Smoothness;
+    #else
+        specGloss.a *= _Smoothness;
+    #endif
+#else // _METALLICSPECGLOSSMAP
+    #if _SPECULAR_SETUP
+        specGloss.rgb = _SpecColor.rgb;
+    #else
+        specGloss.rgb = _Metallic.rrr;
+    #endif
+
+    #ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+        specGloss.a = albedoAlpha * _Smoothness;
+    #else
+        specGloss.a = _Smoothness;
+    #endif
+#endif
+
+    return specGloss;
+&#125;
+
+half SampleOcclusion(float2 uv)
+&#123;
+    #ifdef _OCCLUSIONMAP
+        half occ = SAMPLE_TEXTURE2D(_OcclusionMap, sampler_OcclusionMap, uv).g;
+        return LerpWhiteTo(occ, _OcclusionStrength);
+    #else
+        return half(1.0);
+    #endif
+&#125;
+
+
+// Returns clear coat parameters
+// .x/.r == mask
+// .y/.g == smoothness
+half2 SampleClearCoat(float2 uv)
+&#123;
+#if defined(_CLEARCOAT) || defined(_CLEARCOATMAP)
+    half2 clearCoatMaskSmoothness = half2(_ClearCoatMask, _ClearCoatSmoothness);
+
+#if defined(_CLEARCOATMAP)
+    clearCoatMaskSmoothness *= SAMPLE_TEXTURE2D(_ClearCoatMap, sampler_ClearCoatMap, uv).rg;
+#endif
+
+    return clearCoatMaskSmoothness;
+#else
+    return half2(0.0, 1.0);
+#endif  // _CLEARCOAT
+&#125;
+
+void ApplyPerPixelDisplacement(half3 viewDirTS, inout float2 uv)
+&#123;
+#if defined(_PARALLAXMAP)
+    uv += ParallaxMapping(TEXTURE2D_ARGS(_ParallaxMap, sampler_ParallaxMap), viewDirTS, _Parallax, uv);
+#endif
+&#125;
+
+// Used for scaling detail albedo. Main features:
+// - Depending if detailAlbedo brightens or darkens, scale magnifies effect.
+// - No effect is applied if detailAlbedo is 0.5.
+half3 ScaleDetailAlbedo(half3 detailAlbedo, half scale)
+&#123;
+    // detailAlbedo = detailAlbedo * 2.0h - 1.0h;
+    // detailAlbedo *= _DetailAlbedoMapScale;
+    // detailAlbedo = detailAlbedo * 0.5h + 0.5h;
+    // return detailAlbedo * 2.0f;
+
+    // A bit more optimized
+    return half(2.0) * detailAlbedo * scale - scale + half(1.0);
+&#125;
+
+half3 ApplyDetailAlbedo(float2 detailUv, half3 albedo, half detailMask)
+&#123;
+#if defined(_DETAIL)
+    half3 detailAlbedo = SAMPLE_TEXTURE2D(_DetailAlbedoMap, sampler_DetailAlbedoMap, detailUv).rgb;
+
+    // In order to have same performance as builtin, we do scaling only if scale is not 1.0 (Scaled version has 6 additional instructions)
+#if defined(_DETAIL_SCALED)
+    detailAlbedo = ScaleDetailAlbedo(detailAlbedo, _DetailAlbedoMapScale);
+#else
+    detailAlbedo = half(2.0) * detailAlbedo;
+#endif
+
+    return albedo * LerpWhiteTo(detailAlbedo, detailMask);
+#else
+    return albedo;
+#endif
+&#125;
+
+half3 ApplyDetailNormal(float2 detailUv, half3 normalTS, half detailMask)
+&#123;
+#if defined(_DETAIL)
+#if BUMP_SCALE_NOT_SUPPORTED
+    half3 detailNormalTS = UnpackNormal(SAMPLE_TEXTURE2D(_DetailNormalMap, sampler_DetailNormalMap, detailUv));
+#else
+    half3 detailNormalTS = UnpackNormalScale(SAMPLE_TEXTURE2D(_DetailNormalMap, sampler_DetailNormalMap, detailUv), _DetailNormalMapScale);
+#endif
+
+    // With UNITY_NO_DXT5nm unpacked vector is not normalized for BlendNormalRNM
+    // For visual consistancy we going to do in all cases
+    detailNormalTS = normalize(detailNormalTS);
+
+    return lerp(normalTS, BlendNormalRNM(normalTS, detailNormalTS), detailMask); // todo: detailMask should lerp the angle of the quaternion rotation, not the normals
+#else
+    return normalTS;
+#endif
+&#125;
+
+inline void InitializeStandardLitSurfaceData(float2 uv, out SurfaceData outSurfaceData)
+&#123;
+    half4 albedoAlpha = SampleAlbedoAlpha(uv, TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap));
+    outSurfaceData.alpha = Alpha(albedoAlpha.a, _BaseColor, _Cutoff);
+
+    half4 specGloss = SampleMetallicSpecGloss(uv, albedoAlpha.a);
+    outSurfaceData.albedo = albedoAlpha.rgb * _BaseColor.rgb;
+    outSurfaceData.albedo = AlphaModulate(outSurfaceData.albedo, outSurfaceData.alpha);
+
+#if _SPECULAR_SETUP
+    outSurfaceData.metallic = half(1.0);
+    outSurfaceData.specular = specGloss.rgb;
+#else
+    outSurfaceData.metallic = specGloss.r;
+    outSurfaceData.specular = half3(0.0, 0.0, 0.0);
+#endif
+
+    outSurfaceData.smoothness = specGloss.a;
+    outSurfaceData.normalTS = SampleNormal(uv, TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap), _BumpScale);
+    outSurfaceData.occlusion = SampleOcclusion(uv);
+    outSurfaceData.emission = SampleEmission(uv, _EmissionColor.rgb, TEXTURE2D_ARGS(_EmissionMap, sampler_EmissionMap));
+
+#if defined(_CLEARCOAT) || defined(_CLEARCOATMAP)
+    half2 clearCoat = SampleClearCoat(uv);
+    outSurfaceData.clearCoatMask       = clearCoat.r;
+    outSurfaceData.clearCoatSmoothness = clearCoat.g;
+#else
+    outSurfaceData.clearCoatMask       = half(0.0);
+    outSurfaceData.clearCoatSmoothness = half(0.0);
+#endif
+
+#if defined(_DETAIL)
+    half detailMask = SAMPLE_TEXTURE2D(_DetailMask, sampler_DetailMask, uv).a;
+    float2 detailUv = uv * _DetailAlbedoMap_ST.xy + _DetailAlbedoMap_ST.zw;
+    outSurfaceData.albedo = ApplyDetailAlbedo(detailUv, outSurfaceData.albedo, detailMask);
+    outSurfaceData.normalTS = ApplyDetailNormal(detailUv, outSurfaceData.normalTS, detailMask);
+#endif
+&#125;
+
+#endif // UNIVERSAL_INPUT_SURFACE_PBR_INCLUDED
+</code></pre>
+<p>&emsp;浏览整个hlsl文件，<strong>LitInput.hlsl</strong> 文件就是声明了一些输入内容，现在开始详细解析。</p>
+<h2 id="引用头文件"><a href="#引用头文件" class="headerlink" title="引用头文件"></a>引用头文件</h2><p>&emsp;一开始就先定义了要用到的文件，我们比较熟悉的就是 <strong>Core.hlsl</strong> 和 <strong>SurfaceInput.hlsl</strong> 了，其余文件比如 <strong>ParallaxMapping.hlsl</strong>，很显然是包含了视察映射的一些内容。</p>
+<pre><code class="language-hlsl">#include &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl&quot;
+#include &quot;Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonMaterial.hlsl&quot;
+#include &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/SurfaceInput.hlsl&quot;
+#include &quot;Packages/com.unity.render-pipelines.core/ShaderLibrary/ParallaxMapping.hlsl&quot;
+#include &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/DBuffer.hlsl&quot;
+</code></pre>
+<h2 id="预定义细节标签"><a href="#预定义细节标签" class="headerlink" title="预定义细节标签"></a>预定义细节标签</h2><pre><code class="language-hlsl">#if defined(_DETAIL_MULX2) || defined(_DETAIL_SCALED)
+#define _DETAIL
+#endif
+</code></pre>
+<p>&emsp;可以看到声明 <strong>_DETAIL_MULX2</strong> 或者 <strong>_DETAIL_SCALED</strong> 关键字都会定义 <strong>_DETAIL</strong>，而 <strong>_DETAIL</strong> 的作用如下：</p>
+<pre><code class="language-hlsl">half3 ApplyDetailAlbedo(float2 detailUv, half3 albedo, half detailMask)
+&#123;
+#if defined(_DETAIL)
+    half3 detailAlbedo = SAMPLE_TEXTURE2D(_DetailAlbedoMap, sampler_DetailAlbedoMap, detailUv).rgb;
+
+    // In order to have same performance as builtin, we do scaling only if scale is not 1.0 (Scaled version has 6 additional instructions)
+#if defined(_DETAIL_SCALED)
+    detailAlbedo = ScaleDetailAlbedo(detailAlbedo, _DetailAlbedoMapScale);
+#else
+    detailAlbedo = half(2.0) * detailAlbedo;
+#endif
+
+    return albedo * LerpWhiteTo(detailAlbedo, detailMask);
+#else
+    return albedo;
+#endif
+&#125;
+
+half3 ApplyDetailNormal(float2 detailUv, half3 normalTS, half detailMask)
+&#123;
+#if defined(_DETAIL)
+#if BUMP_SCALE_NOT_SUPPORTED
+    half3 detailNormalTS = UnpackNormal(SAMPLE_TEXTURE2D(_DetailNormalMap, sampler_DetailNormalMap, detailUv));
+#else
+    half3 detailNormalTS = UnpackNormalScale(SAMPLE_TEXTURE2D(_DetailNormalMap, sampler_DetailNormalMap, detailUv), _DetailNormalMapScale);
+#endif
+
+    // With UNITY_NO_DXT5nm unpacked vector is not normalized for BlendNormalRNM
+    // For visual consistancy we going to do in all cases
+    detailNormalTS = normalize(detailNormalTS);
+
+    return lerp(normalTS, BlendNormalRNM(normalTS, detailNormalTS), detailMask); // todo: detailMask should lerp the angle of the quaternion rotation, not the normals
+#else
+    return normalTS;
+#endif
+&#125;
+</code></pre>
+<p>[<img src="/images/post/URPLit/2.png">]</p>
+<h2 id="声明变量"><a href="#声明变量" class="headerlink" title="声明变量"></a>声明变量</h2><pre><code class="language-hlsl">// NOTE: Do not ifdef the properties here as SRP batcher can not handle different layouts.
+CBUFFER_START(UnityPerMaterial)
+float4 _BaseMap_ST;
+float4 _DetailAlbedoMap_ST;
+half4 _BaseColor;
+half4 _SpecColor;
+half4 _EmissionColor;
+half _Cutoff;
+half _Smoothness;
+half _Metallic;
+half _BumpScale;
+half _Parallax;
+half _OcclusionStrength;
+half _ClearCoatMask;
+half _ClearCoatSmoothness;
+half _DetailAlbedoMapScale;
+half _DetailNormalMapScale;
+half _Surface;
+CBUFFER_END
+
+// NOTE: Do not ifdef the properties for dots instancing, but ifdef the actual usage.
+// Otherwise you might break CPU-side as property constant-buffer offsets change per variant.
+// NOTE: Dots instancing is orthogonal to the constant buffer above.
+#ifdef UNITY_DOTS_INSTANCING_ENABLED
+
+UNITY_DOTS_INSTANCING_START(MaterialPropertyMetadata)
+    UNITY_DOTS_INSTANCED_PROP(float4, _BaseColor)
+    UNITY_DOTS_INSTANCED_PROP(float4, _SpecColor)
+    UNITY_DOTS_INSTANCED_PROP(float4, _EmissionColor)
+    UNITY_DOTS_INSTANCED_PROP(float , _Cutoff)
+    UNITY_DOTS_INSTANCED_PROP(float , _Smoothness)
+    UNITY_DOTS_INSTANCED_PROP(float , _Metallic)
+    UNITY_DOTS_INSTANCED_PROP(float , _BumpScale)
+    UNITY_DOTS_INSTANCED_PROP(float , _Parallax)
+    UNITY_DOTS_INSTANCED_PROP(float , _OcclusionStrength)
+    UNITY_DOTS_INSTANCED_PROP(float , _ClearCoatMask)
+    UNITY_DOTS_INSTANCED_PROP(float , _ClearCoatSmoothness)
+    UNITY_DOTS_INSTANCED_PROP(float , _DetailAlbedoMapScale)
+    UNITY_DOTS_INSTANCED_PROP(float , _DetailNormalMapScale)
+    UNITY_DOTS_INSTANCED_PROP(float , _Surface)
+UNITY_DOTS_INSTANCING_END(MaterialPropertyMetadata)
+
+// Here, we want to avoid overriding a property like e.g. _BaseColor with something like this:
+// #define _BaseColor UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4, _BaseColor0)
+//
+// It would be simpler, but it can cause the compiler to regenerate the property loading code for each use of _BaseColor.
+//
+// To avoid this, the property loads are cached in some static values at the beginning of the shader.
+// The properties such as _BaseColor are then overridden so that it expand directly to the static value like this:
+// #define _BaseColor unity_DOTS_Sampled_BaseColor
+//
+// This simple fix happened to improve GPU performances by ~10% on Meta Quest 2 with URP on some scenes.
+static float4 unity_DOTS_Sampled_BaseColor;
+static float4 unity_DOTS_Sampled_SpecColor;
+static float4 unity_DOTS_Sampled_EmissionColor;
+static float  unity_DOTS_Sampled_Cutoff;
+static float  unity_DOTS_Sampled_Smoothness;
+static float  unity_DOTS_Sampled_Metallic;
+static float  unity_DOTS_Sampled_BumpScale;
+static float  unity_DOTS_Sampled_Parallax;
+static float  unity_DOTS_Sampled_OcclusionStrength;
+static float  unity_DOTS_Sampled_ClearCoatMask;
+static float  unity_DOTS_Sampled_ClearCoatSmoothness;
+static float  unity_DOTS_Sampled_DetailAlbedoMapScale;
+static float  unity_DOTS_Sampled_DetailNormalMapScale;
+static float  unity_DOTS_Sampled_Surface;
+
+void SetupDOTSLitMaterialPropertyCaches()
+&#123;
+    unity_DOTS_Sampled_BaseColor            = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4, _BaseColor);
+    unity_DOTS_Sampled_SpecColor            = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4, _SpecColor);
+    unity_DOTS_Sampled_EmissionColor        = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4, _EmissionColor);
+    unity_DOTS_Sampled_Cutoff               = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _Cutoff);
+    unity_DOTS_Sampled_Smoothness           = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _Smoothness);
+    unity_DOTS_Sampled_Metallic             = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _Metallic);
+    unity_DOTS_Sampled_BumpScale            = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _BumpScale);
+    unity_DOTS_Sampled_Parallax             = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _Parallax);
+    unity_DOTS_Sampled_OcclusionStrength    = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _OcclusionStrength);
+    unity_DOTS_Sampled_ClearCoatMask        = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _ClearCoatMask);
+    unity_DOTS_Sampled_ClearCoatSmoothness  = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _ClearCoatSmoothness);
+    unity_DOTS_Sampled_DetailAlbedoMapScale = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _DetailAlbedoMapScale);
+    unity_DOTS_Sampled_DetailNormalMapScale = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _DetailNormalMapScale);
+    unity_DOTS_Sampled_Surface              = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _Surface);
+&#125;
+
+#undef UNITY_SETUP_DOTS_MATERIAL_PROPERTY_CACHES
+#define UNITY_SETUP_DOTS_MATERIAL_PROPERTY_CACHES() SetupDOTSLitMaterialPropertyCaches()
+
+#define _BaseColor              unity_DOTS_Sampled_BaseColor
+#define _SpecColor              unity_DOTS_Sampled_SpecColor
+#define _EmissionColor          unity_DOTS_Sampled_EmissionColor
+#define _Cutoff                 unity_DOTS_Sampled_Cutoff
+#define _Smoothness             unity_DOTS_Sampled_Smoothness
+#define _Metallic               unity_DOTS_Sampled_Metallic
+#define _BumpScale              unity_DOTS_Sampled_BumpScale
+#define _Parallax               unity_DOTS_Sampled_Parallax
+#define _OcclusionStrength      unity_DOTS_Sampled_OcclusionStrength
+#define _ClearCoatMask          unity_DOTS_Sampled_ClearCoatMask
+#define _ClearCoatSmoothness    unity_DOTS_Sampled_ClearCoatSmoothness
+#define _DetailAlbedoMapScale   unity_DOTS_Sampled_DetailAlbedoMapScale
+#define _DetailNormalMapScale   unity_DOTS_Sampled_DetailNormalMapScale
+#define _Surface                unity_DOTS_Sampled_Surface
+
+#endif
+
+TEXTURE2D(_ParallaxMap);        SAMPLER(sampler_ParallaxMap);
+TEXTURE2D(_OcclusionMap);       SAMPLER(sampler_OcclusionMap);
+TEXTURE2D(_DetailMask);         SAMPLER(sampler_DetailMask);
+TEXTURE2D(_DetailAlbedoMap);    SAMPLER(sampler_DetailAlbedoMap);
+TEXTURE2D(_DetailNormalMap);    SAMPLER(sampler_DetailNormalMap);
+TEXTURE2D(_MetallicGlossMap);   SAMPLER(sampler_MetallicGlossMap);
+TEXTURE2D(_SpecGlossMap);       SAMPLER(sampler_SpecGlossMap);
+TEXTURE2D(_ClearCoatMap);       SAMPLER(sampler_ClearCoatMap);
+</code></pre>
+<p>&emsp;别看这一大片代码很多，实际上就做了三件事：</p>
+<ul>
+<li><p>声明 <strong>CBUFFER_START</strong> 开启SRP合批功能。</p>
+<ul>
+<li><details><summary> <font color="#007ACC">🐍 SRP合批常量缓冲区定义代码 </font></summary>
+
+<pre><code class="language-hlsl">    CBUFFER_START(UnityPerMaterial)
+    float4 _BaseMap_ST;
+    float4 _DetailAlbedoMap_ST;
+    half4 _BaseColor;
+    half4 _SpecColor;
+    half4 _EmissionColor;
+    half _Cutoff;
+    half _Smoothness;
+    half _Metallic;
+    half _BumpScale;
+    half _Parallax;
+    half _OcclusionStrength;
+    half _ClearCoatMask;
+    half _ClearCoatSmoothness;
+    half _DetailAlbedoMapScale;
+    half _DetailNormalMapScale;
+    half _Surface;
+    CBUFFER_END
+</code></pre>
+</details></li>
+</ul>
+</li>
+<li><p>声明GPU实例化使用的变量 <strong>UNITY_DOTS_INSTANCING_START</strong> 以便支持GPU实例化。</p>
+<ul>
+<li><details><summary> <font color="#007ACC">🐍 GPU实例化变量定义代码 </font></summary>
+
+<pre><code class="language-hlsl">#ifdef UNITY_DOTS_INSTANCING_ENABLED
+
+UNITY_DOTS_INSTANCING_START(MaterialPropertyMetadata)
+    UNITY_DOTS_INSTANCED_PROP(float4, _BaseColor)
+    UNITY_DOTS_INSTANCED_PROP(float4, _SpecColor)
+    UNITY_DOTS_INSTANCED_PROP(float4, _EmissionColor)
+    UNITY_DOTS_INSTANCED_PROP(float , _Cutoff)
+    UNITY_DOTS_INSTANCED_PROP(float , _Smoothness)
+    UNITY_DOTS_INSTANCED_PROP(float , _Metallic)
+    UNITY_DOTS_INSTANCED_PROP(float , _BumpScale)
+    UNITY_DOTS_INSTANCED_PROP(float , _Parallax)
+    UNITY_DOTS_INSTANCED_PROP(float , _OcclusionStrength)
+    UNITY_DOTS_INSTANCED_PROP(float , _ClearCoatMask)
+    UNITY_DOTS_INSTANCED_PROP(float , _ClearCoatSmoothness)
+    UNITY_DOTS_INSTANCED_PROP(float , _DetailAlbedoMapScale)
+    UNITY_DOTS_INSTANCED_PROP(float , _DetailNormalMapScale)
+    UNITY_DOTS_INSTANCED_PROP(float , _Surface)
+UNITY_DOTS_INSTANCING_END(MaterialPropertyMetadata)
+
+// Here, we want to avoid overriding a property like e.g. _BaseColor with something like this:
+// #define _BaseColor UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4, _BaseColor0)
+//
+// It would be simpler, but it can cause the compiler to regenerate the property loading code for each use of _BaseColor.
+//
+// To avoid this, the property loads are cached in some static values at the beginning of the shader.
+// The properties such as _BaseColor are then overridden so that it expand directly to the static value like this:
+// #define _BaseColor unity_DOTS_Sampled_BaseColor
+//
+// This simple fix happened to improve GPU performances by ~10% on Meta Quest 2 with URP on some scenes.
+static float4 unity_DOTS_Sampled_BaseColor;
+static float4 unity_DOTS_Sampled_SpecColor;
+static float4 unity_DOTS_Sampled_EmissionColor;
+static float  unity_DOTS_Sampled_Cutoff;
+static float  unity_DOTS_Sampled_Smoothness;
+static float  unity_DOTS_Sampled_Metallic;
+static float  unity_DOTS_Sampled_BumpScale;
+static float  unity_DOTS_Sampled_Parallax;
+static float  unity_DOTS_Sampled_OcclusionStrength;
+static float  unity_DOTS_Sampled_ClearCoatMask;
+static float  unity_DOTS_Sampled_ClearCoatSmoothness;
+static float  unity_DOTS_Sampled_DetailAlbedoMapScale;
+static float  unity_DOTS_Sampled_DetailNormalMapScale;
+static float  unity_DOTS_Sampled_Surface;
+
+void SetupDOTSLitMaterialPropertyCaches()
+&#123;
+    unity_DOTS_Sampled_BaseColor            = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4, _BaseColor);
+    unity_DOTS_Sampled_SpecColor            = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4, _SpecColor);
+    unity_DOTS_Sampled_EmissionColor        = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4, _EmissionColor);
+    unity_DOTS_Sampled_Cutoff               = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _Cutoff);
+    unity_DOTS_Sampled_Smoothness           = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _Smoothness);
+    unity_DOTS_Sampled_Metallic             = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _Metallic);
+    unity_DOTS_Sampled_BumpScale            = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _BumpScale);
+    unity_DOTS_Sampled_Parallax             = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _Parallax);
+    unity_DOTS_Sampled_OcclusionStrength    = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _OcclusionStrength);
+    unity_DOTS_Sampled_ClearCoatMask        = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _ClearCoatMask);
+    unity_DOTS_Sampled_ClearCoatSmoothness  = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _ClearCoatSmoothness);
+    unity_DOTS_Sampled_DetailAlbedoMapScale = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _DetailAlbedoMapScale);
+    unity_DOTS_Sampled_DetailNormalMapScale = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _DetailNormalMapScale);
+    unity_DOTS_Sampled_Surface              = UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float , _Surface);
+&#125;
+
+#undef UNITY_SETUP_DOTS_MATERIAL_PROPERTY_CACHES
+#define UNITY_SETUP_DOTS_MATERIAL_PROPERTY_CACHES() SetupDOTSLitMaterialPropertyCaches()
+
+#define _BaseColor              unity_DOTS_Sampled_BaseColor
+#define _SpecColor              unity_DOTS_Sampled_SpecColor
+#define _EmissionColor          unity_DOTS_Sampled_EmissionColor
+#define _Cutoff                 unity_DOTS_Sampled_Cutoff
+#define _Smoothness             unity_DOTS_Sampled_Smoothness
+#define _Metallic               unity_DOTS_Sampled_Metallic
+#define _BumpScale              unity_DOTS_Sampled_BumpScale
+#define _Parallax               unity_DOTS_Sampled_Parallax
+#define _OcclusionStrength      unity_DOTS_Sampled_OcclusionStrength
+#define _ClearCoatMask          unity_DOTS_Sampled_ClearCoatMask
+#define _ClearCoatSmoothness    unity_DOTS_Sampled_ClearCoatSmoothness
+#define _DetailAlbedoMapScale   unity_DOTS_Sampled_DetailAlbedoMapScale
+#define _DetailNormalMapScale   unity_DOTS_Sampled_DetailNormalMapScale
+#define _Surface                unity_DOTS_Sampled_Surface
+
+#endif
+</code></pre>
+</details>
+</li>
+<li><details><summary> <font color="#007ACC">🐍 为什么要声明这么多字段呢？ </font></summary>
+
+<blockquote>
+<p>在这里，我们希望避免像这样用某些内容覆盖属性，比如 <code>_BaseColor：#define _BaseColor UNITY_ACCESS_DOTS_INSTANCED_PROP_WITH_DEFAULT(float4, _BaseColor0);</code><br>这样做虽然更简单，但可能会导致编译器在每次使用 <strong>_BaseColor</strong> 时重新生成属性加载代码。<br>为避免这种情况，属性加载在着色器开始处的某些静态值中被缓存。<br>然后像 <strong>_BaseColor</strong> 这样的属性会被覆盖，使其直接展开为静态值，如下所示：<br><code>#define _BaseColor unity_DOTS_Sampled_BaseColor</code><br>这个简单的修复在某些场景下，在 URP 上的 Meta Quest 2 上提高了 GPU 性能约 10%。</p>
+</blockquote>
+</details></li>
+</ul>
+</li>
+<li><p>声明贴图和采样器</p>
+<ul>
+<li><details><summary> <font color="#007ACC">🐍 贴图与采样器定义代码 </font></summary>
+
+<pre><code class="language-hlsl">TEXTURE2D(_ParallaxMap);        SAMPLER(sampler_ParallaxMap);
+TEXTURE2D(_OcclusionMap);       SAMPLER(sampler_OcclusionMap);
+TEXTURE2D(_DetailMask);         SAMPLER(sampler_DetailMask);
+TEXTURE2D(_DetailAlbedoMap);    SAMPLER(sampler_DetailAlbedoMap);
+TEXTURE2D(_DetailNormalMap);    SAMPLER(sampler_DetailNormalMap);
+TEXTURE2D(_MetallicGlossMap);   SAMPLER(sampler_MetallicGlossMap);
+TEXTURE2D(_SpecGlossMap);       SAMPLER(sampler_SpecGlossMap);
+TEXTURE2D(_ClearCoatMap);       SAMPLER(sampler_ClearCoatMap);
+</code></pre>
+</details></li>
+</ul>
+</li>
+</ul>
+<h2 id="预定义一个函数处理如何采样高光和金属工作流中定义的贴图"><a href="#预定义一个函数处理如何采样高光和金属工作流中定义的贴图" class="headerlink" title="预定义一个函数处理如何采样高光和金属工作流中定义的贴图"></a>预定义一个函数处理如何采样高光和金属工作流中定义的贴图</h2><pre><code class="language-hlsl">#ifdef _SPECULAR_SETUP
+    #define SAMPLE_METALLICSPECULAR(uv) SAMPLE_TEXTURE2D(_SpecGlossMap, sampler_SpecGlossMap, uv)
+#else
+    #define SAMPLE_METALLICSPECULAR(uv) SAMPLE_TEXTURE2D(_MetallicGlossMap, sampler_MetallicGlossMap, uv)
+#endif
+</code></pre>
+<p>&emsp;可以看到：</p>
+<ul>
+<li>开启高光工作流（启用关键字 <strong>_SPECULAR_SETUP</strong> ）： <strong>SAMPLE_METALLICSPECULAR</strong> 被定义为采样 <strong>_SpecGlossMap</strong>。</li>
+<li>开启金属工作流（关闭关键字 <strong>_SPECULAR_SETUP</strong> ）： <strong>SAMPLE_METALLICSPECULAR</strong> 被定义为采样 <strong>_MetallicGlossMap</strong>。</li>
+</ul>
+<h2 id="定义采样金属-高光工作流的高光函数"><a href="#定义采样金属-高光工作流的高光函数" class="headerlink" title="定义采样金属&#x2F;高光工作流的高光函数"></a>定义采样金属&#x2F;高光工作流的高光函数</h2><pre><code class="language-hlsl">half4 SampleMetallicSpecGloss(float2 uv, half albedoAlpha)
+&#123;
+    half4 specGloss;
+
+#ifdef _METALLICSPECGLOSSMAP
+    specGloss = half4(SAMPLE_METALLICSPECULAR(uv));
+    #ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+        specGloss.a = albedoAlpha * _Smoothness;
+    #else
+        specGloss.a *= _Smoothness;
+    #endif
+#else // _METALLICSPECGLOSSMAP
+    #if _SPECULAR_SETUP
+        specGloss.rgb = _SpecColor.rgb;
+    #else
+        specGloss.rgb = _Metallic.rrr;
+    #endif
+
+    #ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+        specGloss.a = albedoAlpha * _Smoothness;
+    #else
+        specGloss.a = _Smoothness;
+    #endif
+#endif
+
+    return specGloss;
+&#125;
+</code></pre>
+<ul>
+<li><strong>uv</strong>：输入一个采样uv，一般就是模型的uv。</li>
+<li><strong>albedoAlpha</strong>: albedo贴图的Alpha数值，这个数值一定是albedo贴图的，不能做预处理，比如albedo*_BaseColor，这是不可以的。但如果是自定义，那就不用考虑这种问题了。<pre><code class="language-hlsl">albedoAlpha = SAMPLE_TEXTURE2D(_BaseMap,sampler_BaseMap,i.uv).a;
+</code></pre>
+</li>
+</ul>
+<p>&emsp;在这个函数中，首先定义了一个变量 <strong>specGloss</strong> ，然后分为两种情况：</p>
+<ol>
+<li>材质面板赋予了金属&#x2F;高光工作流的高光贴图：</li>
+</ol>
+<ul>
+<li>先采样贴图，<strong>SAMPLE_METALLICSPECULAR</strong> 会根据对应的工作流返回对应的贴图的颜色，则获得了 <strong>specGloss</strong> 的rgb颜色，存放高光颜色。</li>
+<li>然后获取光滑度，光滑度存放在 <strong>specGloss</strong> 的alpha通道中，分为两种情况：<ol>
+<li>光滑度数值贴图来自 <strong>albedoAlpha</strong> ，则返回 <strong>albedoAlpha*调节参数（即_Smoothness）</strong>。</li>
+<li>光滑度数值贴图来自高光贴图 ，则数值就是采样好并存储好的 <strong>specGloss.a</strong> ，直接返回 <strong>specGloss.a*调节参数（即_Smoothness）</strong>。</li>
+</ol>
+</li>
+</ul>
+<ol start="2">
+<li>材质面板未赋予金属&#x2F;高光工作流的高光贴图：</li>
+</ol>
+<ul>
+<li>先获取高光颜色，高光工作流定义了 <strong>_SpecColor</strong> 高光颜色属性，直接赋值即可，但是金属工作流不存在 <strong>_SpecColor</strong> 属性一说，直接赋值为 <strong>_Metallic（金属强度调节参数）</strong> 的灰度颜色。</li>
+<li>然后获取光滑度，光滑度存放在 <strong>specGloss</strong> 的alpha通道中，分为两种情况：<ol>
+<li>光滑度数值贴图来自 <strong>albedoAlpha</strong> ，则返回 <strong>albedoAlpha*调节参数（即_Smoothness）</strong>。</li>
+<li>因为没有金属&#x2F;高光工作流的高光贴图了，因此如果不是来自albedo贴图的alpha通道的话，直接返回 <strong>_Smoothness（光滑度调节参数）</strong>。</li>
+</ol>
+</li>
+</ul>
+<h2 id="定义采样遮蔽图函数"><a href="#定义采样遮蔽图函数" class="headerlink" title="定义采样遮蔽图函数"></a>定义采样遮蔽图函数</h2><pre><code class="language-hlsl">half SampleOcclusion(float2 uv)
+&#123;
+    #ifdef _OCCLUSIONMAP
+        half occ = SAMPLE_TEXTURE2D(_OcclusionMap, sampler_OcclusionMap, uv).g;
+        return LerpWhiteTo(occ, _OcclusionStrength);
+    #else
+        return half(1.0);
+    #endif
+&#125;
+</code></pre>
+<ul>
+<li><p><strong>uv</strong>：输入一个采样uv，一般就是模型的uv。<br>&emsp;函数中分为了有遮蔽贴图和没有遮蔽贴图两种情况。所谓遮蔽就是物体自遮挡产生的暗部区域，也叫做Ao。因为实时计算不可能真的去计算物体自身的遮挡关系，这太消耗性能了，所以实时遮蔽都是采用一张遮罩图作为遮蔽区域的遮罩。数值越靠近0，表示这里暗部更多，越靠近1，表示这里越没有自遮挡。</p>
+</li>
+<li><details><summary> <font color="#007ACC">🐍 LerpWhiteTo函数是什么？ </font></summary>
+
+<pre><code class="language-hlsl">real LerpWhiteTo(real b, real t)
+&#123;
+    real oneMinusT = 1.0 - t;
+    return oneMinusT + b * t;
+&#125;
+</code></pre>
+<blockquote>
+<p>这个函数翻译即为”从白色插值到”，我们可以转换一下公式就知道它其实就是一个 <strong>lerp</strong> 函数而已：$1-t+b\times t &#x3D; 1+(b-1)\times t &#x3D; lerp(1,b,t)$</p>
+</blockquote>
+</li>
+</ul>
+</details>
+
+<ul>
+<li><details><summary> <font color="#007ACC">🐍 为什么要使用LerpWhiteTo函数？ </font></summary>
+
+  &emsp;我们知道 <strong>LerpWhiteTo</strong> 不过是一个封装的从1插值到目标值的函数，回到Shader代码，我们实际可以将其转换成直观的表示：<pre><code class="language-hlsl">half SampleOcclusion(float2 uv)
+&#123;
+    #ifdef _OCCLUSIONMAP
+        half occ = SAMPLE_TEXTURE2D(_OcclusionMap, sampler_OcclusionMap, uv).g;
+        return lerp(1.0,occ, _OcclusionStrength);
+    #else
+        return half(1.0);
+    #endif
+&#125;
+</code></pre>
+  &emsp;因为我们拥有 <strong>_OcclusionStrength</strong> 强度调节属性，那么当 <strong>_OcclusionStrength</strong> 为0时，则应该没有遮蔽，反之为1时则根据贴图的遮蔽区域进行设置。<br>  &emsp;我们放到宏观来看，遮蔽贴图一定是有的地方没有遮蔽，那么那部分贴图区域就为1，有的地方有遮蔽，那部分贴图区域为0。<ul>
+<li>当 <strong>occ</strong> 为1时，不管如何调节 <strong>_OcclusionStrength</strong> 都为1，这样就保证了这部分区域是没有遮蔽的。</li>
+<li>但 <strong>ooc</strong> 为0时，那么返回的遮蔽强度将会是 <strong>1.0-_OcclusionStrength</strong> 强度，则即使参数越大，那么这个区域就越暗，反之越亮。</li>
+</ul>
+</li>
+</ul>
+</details>
+
+<h2 id="定义采样清漆贴图函数"><a href="#定义采样清漆贴图函数" class="headerlink" title="定义采样清漆贴图函数"></a>定义采样清漆贴图函数</h2><pre><code class="language-hlsl">// Returns clear coat parameters
+// .x/.r == mask
+// .y/.g == smoothness
+half2 SampleClearCoat(float2 uv)
+&#123;
+#if defined(_CLEARCOAT) || defined(_CLEARCOATMAP)
+    half2 clearCoatMaskSmoothness = half2(_ClearCoatMask, _ClearCoatSmoothness);
+
+#if defined(_CLEARCOATMAP)
+    clearCoatMaskSmoothness *= SAMPLE_TEXTURE2D(_ClearCoatMap, sampler_ClearCoatMap, uv).rg;
+#endif
+
+    return clearCoatMaskSmoothness;
+#else
+    return half2(0.0, 1.0);
+#endif  // _CLEARCOAT
+&#125;
+</code></pre>
+<p>&emsp;清漆这里不作详解。</p>
+<h2 id="定义视差映射函数"><a href="#定义视差映射函数" class="headerlink" title="定义视差映射函数"></a>定义视差映射函数</h2><pre><code class="language-hlsl">void ApplyPerPixelDisplacement(half3 viewDirTS, inout float2 uv)
+&#123;
+#if defined(_PARALLAXMAP)
+    uv += ParallaxMapping(TEXTURE2D_ARGS(_ParallaxMap, sampler_ParallaxMap), viewDirTS, _Parallax, uv);
+#endif
+&#125;
+</code></pre>
+<details><summary> <font color="#007ACC">🐍 ParallaxMapping的算法是？ </font></summary>
+
+<pre><code class="language-hlsl">half2 ParallaxOffset1Step(half height, half amplitude, half3 viewDirTS)
+&#123;
+    height = height * amplitude - amplitude / 2.0;
+    half3 v = normalize(viewDirTS);
+    v.z += 0.42;
+    return height * (v.xy / v.z);
+&#125;
+
+float2 ParallaxMapping(TEXTURE2D_PARAM(heightMap, sampler_heightMap), half3 viewDirTS, half scale, float2 uv)
+&#123;
+    half h = SAMPLE_TEXTURE2D(heightMap, sampler_heightMap, uv).g;
+    float2 offset = ParallaxOffset1Step(h, scale, viewDirTS);
+    return offset;
+&#125;
+</code></pre>
+</details>
+
+<h2 id="定义应用细节贴图函数与采样细节贴图函数"><a href="#定义应用细节贴图函数与采样细节贴图函数" class="headerlink" title="定义应用细节贴图函数与采样细节贴图函数"></a>定义应用细节贴图函数与采样细节贴图函数</h2><pre><code class="language-hlsl">// Used for scaling detail albedo. Main features:
+// - Depending if detailAlbedo brightens or darkens, scale magnifies effect.
+// - No effect is applied if detailAlbedo is 0.5.
+half3 ScaleDetailAlbedo(half3 detailAlbedo, half scale)
+&#123;
+    // detailAlbedo = detailAlbedo * 2.0h - 1.0h;
+    // detailAlbedo *= _DetailAlbedoMapScale;
+    // detailAlbedo = detailAlbedo * 0.5h + 0.5h;
+    // return detailAlbedo * 2.0f;
+
+    // A bit more optimized
+    return half(2.0) * detailAlbedo * scale - scale + half(1.0);
+&#125;
+
+half3 ApplyDetailAlbedo(float2 detailUv, half3 albedo, half detailMask)
+&#123;
+#if defined(_DETAIL)
+    half3 detailAlbedo = SAMPLE_TEXTURE2D(_DetailAlbedoMap, sampler_DetailAlbedoMap, detailUv).rgb;
+
+    // In order to have same performance as builtin, we do scaling only if scale is not 1.0 (Scaled version has 6 additional instructions)
+#if defined(_DETAIL_SCALED)
+    detailAlbedo = ScaleDetailAlbedo(detailAlbedo, _DetailAlbedoMapScale);
+#else
+    detailAlbedo = half(2.0) * detailAlbedo;
+#endif
+
+    return albedo * LerpWhiteTo(detailAlbedo, detailMask);
+#else
+    return albedo;
+#endif
+&#125;
+Unity对细节贴图做了两倍亮度的增量，让细节贴图和原贴图颜色混合能够更加清晰。
+</code></pre>
+<h2 id="定义采样细节法线贴图函数"><a href="#定义采样细节法线贴图函数" class="headerlink" title="定义采样细节法线贴图函数"></a>定义采样细节法线贴图函数</h2><pre><code class="language-hlsl">half3 ApplyDetailNormal(float2 detailUv, half3 normalTS, half detailMask)
+&#123;
+#if defined(_DETAIL)
+#if BUMP_SCALE_NOT_SUPPORTED
+    half3 detailNormalTS = UnpackNormal(SAMPLE_TEXTURE2D(_DetailNormalMap, sampler_DetailNormalMap, detailUv));
+#else
+    half3 detailNormalTS = UnpackNormalScale(SAMPLE_TEXTURE2D(_DetailNormalMap, sampler_DetailNormalMap, detailUv), _DetailNormalMapScale);
+#endif
+
+    // With UNITY_NO_DXT5nm unpacked vector is not normalized for BlendNormalRNM
+    // For visual consistancy we going to do in all cases
+    detailNormalTS = normalize(detailNormalTS);
+
+    return lerp(normalTS, BlendNormalRNM(normalTS, detailNormalTS), detailMask); // todo: detailMask should lerp the angle of the quaternion rotation, not the normals
+#else
+    return normalTS;
+#endif
+&#125;
+</code></pre>
+<h2 id="初始化表面数据函数"><a href="#初始化表面数据函数" class="headerlink" title="初始化表面数据函数"></a>初始化表面数据函数</h2><pre><code class="language-hlsl">inline void InitializeStandardLitSurfaceData(float2 uv, out SurfaceData outSurfaceData)
+&#123;
+    half4 albedoAlpha = SampleAlbedoAlpha(uv, TEXTURE2D_ARGS(_BaseMap, sampler_BaseMap));
+    outSurfaceData.alpha = Alpha(albedoAlpha.a, _BaseColor, _Cutoff);
+
+    half4 specGloss = SampleMetallicSpecGloss(uv, albedoAlpha.a);
+    outSurfaceData.albedo = albedoAlpha.rgb * _BaseColor.rgb;
+    outSurfaceData.albedo = AlphaModulate(outSurfaceData.albedo, outSurfaceData.alpha);
+
+#if _SPECULAR_SETUP
+    outSurfaceData.metallic = half(1.0);
+    outSurfaceData.specular = specGloss.rgb;
+#else
+    outSurfaceData.metallic = specGloss.r;
+    outSurfaceData.specular = half3(0.0, 0.0, 0.0);
+#endif
+
+    outSurfaceData.smoothness = specGloss.a;
+    outSurfaceData.normalTS = SampleNormal(uv, TEXTURE2D_ARGS(_BumpMap, sampler_BumpMap), _BumpScale);
+    outSurfaceData.occlusion = SampleOcclusion(uv);
+    outSurfaceData.emission = SampleEmission(uv, _EmissionColor.rgb, TEXTURE2D_ARGS(_EmissionMap, sampler_EmissionMap));
+
+#if defined(_CLEARCOAT) || defined(_CLEARCOATMAP)
+    half2 clearCoat = SampleClearCoat(uv);
+    outSurfaceData.clearCoatMask       = clearCoat.r;
+    outSurfaceData.clearCoatSmoothness = clearCoat.g;
+#else
+    outSurfaceData.clearCoatMask       = half(0.0);
+    outSurfaceData.clearCoatSmoothness = half(0.0);
+#endif
+
+#if defined(_DETAIL)
+    half detailMask = SAMPLE_TEXTURE2D(_DetailMask, sampler_DetailMask, uv).a;
+    float2 detailUv = uv * _DetailAlbedoMap_ST.xy + _DetailAlbedoMap_ST.zw;
+    outSurfaceData.albedo = ApplyDetailAlbedo(detailUv, outSurfaceData.albedo, detailMask);
+    outSurfaceData.normalTS = ApplyDetailNormal(detailUv, outSurfaceData.normalTS, detailMask);
+#endif
+&#125;
+</code></pre>
+<p>&emsp;其实没有什么需要多说的，这个函数就是封装了贴图采样，初始化表面数据，解释一下不常见的函数。</p>
+<ul>
+<li><p><strong>SampleAlbedoAlpha</strong>：只是封装了一下采样函数而已：</p>
+<pre><code class="language-hlsl">half4 SampleAlbedoAlpha(float2 uv, TEXTURE2D_PARAM(albedoAlphaMap, sampler_albedoAlphaMap))
+&#123;
+    return half4(SAMPLE_TEXTURE2D(albedoAlphaMap, sampler_albedoAlphaMap, uv));
+&#125;
+</code></pre>
+</li>
+<li><p><strong>Alpha</strong>: 对透明度进行处理，包含了透明度裁剪，需要注意其中对abledoAlpha的alpha通道处理，因为在URP设置中这个alpha可能代表光滑度，不能被用来裁剪：</p>
+<pre><code class="language-hlsl">  half Alpha(half albedoAlpha, half4 color, half cutoff)
+  &#123;
+  #if !defined(_SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A) &amp;&amp; !defined(_GLOSSINESS_FROM_BASE_ALPHA)
+      half alpha = albedoAlpha * color.a;
+  #else
+      half alpha = color.a;
+  #endif
+
+      alpha = AlphaDiscard(alpha, cutoff);
+
+      return alpha;
+  &#125;
+</code></pre>
+</li>
+<li><p><strong>SampleMetallicSpecGloss</strong>：在之前已经做过介绍，这是采样金属&#x2F;高光工作流的高光便返回高光颜色与光滑度的，光滑度存放在返回值的a通道中：</p>
+<pre><code class="language-hlsl">  #ifdef _SPECULAR_SETUP
+      #define SAMPLE_METALLICSPECULAR(uv) SAMPLE_TEXTURE2D(_SpecGlossMap, sampler_SpecGlossMap, uv)
+  #else
+      #define SAMPLE_METALLICSPECULAR(uv) SAMPLE_TEXTURE2D(_MetallicGlossMap, sampler_MetallicGlossMap, uv)
+  #endif
+
+  half4 SampleMetallicSpecGloss(float2 uv, half albedoAlpha)
+  &#123;
+      half4 specGloss;
+
+  #ifdef _METALLICSPECGLOSSMAP
+      specGloss = half4(SAMPLE_METALLICSPECULAR(uv));
+      #ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+          specGloss.a = albedoAlpha * _Smoothness;
+      #else
+          specGloss.a *= _Smoothness;
+      #endif
+  #else // _METALLICSPECGLOSSMAP
+      #if _SPECULAR_SETUP
+          specGloss.rgb = _SpecColor.rgb;
+      #else
+          specGloss.rgb = _Metallic.rrr;
+      #endif
+
+      #ifdef _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+          specGloss.a = albedoAlpha * _Smoothness;
+      #else
+          specGloss.a = _Smoothness;
+      #endif
+  #endif
+
+      return specGloss;
+  &#125;
+</code></pre>
+</li>
+<li><p><strong>AlphaModulate</strong>：这个函数是为了对应关键字 <strong>_ALPHAMODULATE_ON</strong> 的。通过使用 <strong>alpha</strong> 将 <strong>albedo</strong> 向 1（白色）线性插值来为 <strong>multiply</strong> 混合创建假 <strong>alpha</strong>。手动调整以获得“更亮”的 <strong>multiply</strong> 效果（类似于“预乘 alpha”），将是在纹理中绘制更白的像素。这在着色器中模拟了该过程，因此应应用于基础&#x2F;源颜色。代码如下：</p>
+<pre><code class="language-hlsl">  half3 AlphaModulate(half3 albedo, half alpha)
+  &#123;
+      // Fake alpha for multiply blend by lerping albedo towards 1 (white) using alpha.
+      // Manual adjustment for &quot;lighter&quot; multiply effect (similar to &quot;premultiplied alpha&quot;)
+      // would be painting whiter pixels in the texture.
+      // This emulates that procedure in shader, so it should be applied to the base/source color.
+      #if defined(_ALPHAMODULATE_ON)
+          return lerp(half3(1.0, 1.0, 1.0), albedo, alpha);
+      #else
+          return albedo;
+      #endif
+  &#125;
+</code></pre>
+</li>
+<li><p><strong>SampleNormal</strong>: 法线采样封装函数:</p>
+<pre><code class="language-hlsl">  half3 SampleNormal(float2 uv, TEXTURE2D_PARAM(bumpMap, sampler_bumpMap), half scale = half(1.0))
+  &#123;
+  #ifdef _NORMALMAP
+      half4 n = SAMPLE_TEXTURE2D(bumpMap, sampler_bumpMap, uv);
+      #if BUMP_SCALE_NOT_SUPPORTED
+          return UnpackNormal(n);
+      #else
+          return UnpackNormalScale(n, scale);
+      #endif
+  #else
+      return half3(0.0h, 0.0h, 1.0h);
+  #endif
+  &#125;
+</code></pre>
+</li>
+<li><p><strong>SampleEmission</strong>：采样自发光函数：</p>
+<pre><code class="language-hlsl">  half3 SampleEmission(float2 uv, half3 emissionColor, TEXTURE2D_PARAM(emissionMap, sampler_emissionMap))
+  &#123;
+  #ifndef _EMISSION
+      return 0;
+  #else
+      return SAMPLE_TEXTURE2D(emissionMap, sampler_emissionMap, uv).rgb * emissionColor;
+  #endif
+  &#125;
+</code></pre>
+</li>
+</ul>
+<details><summary> <font color="#007ACC">🐍 SurfaceData定义是什么？ </font></summary>
+
+<pre><code class="language-hlsl">struct SurfaceData
+&#123;
+    half3 albedo;
+    half3 specular;
+    half  metallic;
+    half  smoothness;
+    half3 normalTS;
+    half3 emission;
+    half  occlusion;
+    half  alpha;
+    half  clearCoatMask;
+    half  clearCoatSmoothness;
+&#125;;
+</code></pre>
+</details>
+
+<hr>
+<h1 id="LitForwardPass-hlsl"><a href="#LitForwardPass-hlsl" class="headerlink" title="LitForwardPass.hlsl"></a>LitForwardPass.hlsl</h1><pre><code class="language-hlsl">#ifndef UNIVERSAL_FORWARD_LIT_PASS_INCLUDED
+#define UNIVERSAL_FORWARD_LIT_PASS_INCLUDED
+
+#include &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl&quot;
+#if defined(LOD_FADE_CROSSFADE)
+    #include &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl&quot;
+#endif
+
+// GLES2 has limited amount of interpolators
+#if defined(_PARALLAXMAP) &amp;&amp; !defined(SHADER_API_GLES)
+#define REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR
+#endif
+
+#if (defined(_NORMALMAP) || (defined(_PARALLAXMAP) &amp;&amp; !defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR))) || defined(_DETAIL)
+#define REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR
+#endif
+
+// keep this file in sync with LitGBufferPass.hlsl
+
+struct Attributes
+&#123;
+    float4 positionOS   : POSITION;
+    float3 normalOS     : NORMAL;
+    float4 tangentOS    : TANGENT;
+    float2 texcoord     : TEXCOORD0;
+    float2 staticLightmapUV   : TEXCOORD1;
+    float2 dynamicLightmapUV  : TEXCOORD2;
+    UNITY_VERTEX_INPUT_INSTANCE_ID
+&#125;;
+
+struct Varyings
+&#123;
+    float2 uv                       : TEXCOORD0;
+
+#if defined(REQUIRES_WORLD_SPACE_POS_INTERPOLATOR)
+    float3 positionWS               : TEXCOORD1;
+#endif
+
+    float3 normalWS                 : TEXCOORD2;
+#if defined(REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR)
+    half4 tangentWS                : TEXCOORD3;    // xyz: tangent, w: sign
+#endif
+
+#ifdef _ADDITIONAL_LIGHTS_VERTEX
+    half4 fogFactorAndVertexLight   : TEXCOORD5; // x: fogFactor, yzw: vertex light
+#else
+    half  fogFactor                 : TEXCOORD5;
+#endif
+
+#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
+    float4 shadowCoord              : TEXCOORD6;
+#endif
+
+#if defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
+    half3 viewDirTS                : TEXCOORD7;
+#endif
+
+    DECLARE_LIGHTMAP_OR_SH(staticLightmapUV, vertexSH, 8);
+#ifdef DYNAMICLIGHTMAP_ON
+    float2  dynamicLightmapUV : TEXCOORD9; // Dynamic lightmap UVs
+#endif
+
+    float4 positionCS               : SV_POSITION;
+    UNITY_VERTEX_INPUT_INSTANCE_ID
+    UNITY_VERTEX_OUTPUT_STEREO
+&#125;;
+
+void InitializeInputData(Varyings input, half3 normalTS, out InputData inputData)
+&#123;
+    inputData = (InputData)0;
+
+#if defined(REQUIRES_WORLD_SPACE_POS_INTERPOLATOR)
+    inputData.positionWS = input.positionWS;
+#endif
+
+    half3 viewDirWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
+#if defined(_NORMALMAP) || defined(_DETAIL)
+    float sgn = input.tangentWS.w;      // should be either +1 or -1
+    float3 bitangent = sgn * cross(input.normalWS.xyz, input.tangentWS.xyz);
+    half3x3 tangentToWorld = half3x3(input.tangentWS.xyz, bitangent.xyz, input.normalWS.xyz);
+
+    #if defined(_NORMALMAP)
+    inputData.tangentToWorld = tangentToWorld;
+    #endif
+    inputData.normalWS = TransformTangentToWorld(normalTS, tangentToWorld);
+#else
+    inputData.normalWS = input.normalWS;
+#endif
+
+    inputData.normalWS = NormalizeNormalPerPixel(inputData.normalWS);
+    inputData.viewDirectionWS = viewDirWS;
+
+#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
+    inputData.shadowCoord = input.shadowCoord;
+#elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)
+    inputData.shadowCoord = TransformWorldToShadowCoord(inputData.positionWS);
+#else
+    inputData.shadowCoord = float4(0, 0, 0, 0);
+#endif
+#ifdef _ADDITIONAL_LIGHTS_VERTEX
+    inputData.fogCoord = InitializeInputDataFog(float4(input.positionWS, 1.0), input.fogFactorAndVertexLight.x);
+    inputData.vertexLighting = input.fogFactorAndVertexLight.yzw;
+#else
+    inputData.fogCoord = InitializeInputDataFog(float4(input.positionWS, 1.0), input.fogFactor);
+#endif
+
+#if defined(DYNAMICLIGHTMAP_ON)
+    inputData.bakedGI = SAMPLE_GI(input.staticLightmapUV, input.dynamicLightmapUV, input.vertexSH, inputData.normalWS);
+#else
+    inputData.bakedGI = SAMPLE_GI(input.staticLightmapUV, input.vertexSH, inputData.normalWS);
+#endif
+
+    inputData.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(input.positionCS);
+    inputData.shadowMask = SAMPLE_SHADOWMASK(input.staticLightmapUV);
+
+    #if defined(DEBUG_DISPLAY)
+    #if defined(DYNAMICLIGHTMAP_ON)
+    inputData.dynamicLightmapUV = input.dynamicLightmapUV;
+    #endif
+    #if defined(LIGHTMAP_ON)
+    inputData.staticLightmapUV = input.staticLightmapUV;
+    #else
+    inputData.vertexSH = input.vertexSH;
+    #endif
+    #endif
+&#125;
+
+///////////////////////////////////////////////////////////////////////////////
+//                  Vertex and Fragment functions                            //
+///////////////////////////////////////////////////////////////////////////////
+
+// Used in Standard (Physically Based) shader
+Varyings LitPassVertex(Attributes input)
+&#123;
+    Varyings output = (Varyings)0;
+
+    UNITY_SETUP_INSTANCE_ID(input);
+    UNITY_TRANSFER_INSTANCE_ID(input, output);
+    UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
+
+    VertexPositionInputs vertexInput = GetVertexPositionInputs(input.positionOS.xyz);
+
+    // normalWS and tangentWS already normalize.
+    // this is required to avoid skewing the direction during interpolation
+    // also required for per-vertex lighting and SH evaluation
+    VertexNormalInputs normalInput = GetVertexNormalInputs(input.normalOS, input.tangentOS);
+
+    half3 vertexLight = VertexLighting(vertexInput.positionWS, normalInput.normalWS);
+
+    half fogFactor = 0;
+    #if !defined(_FOG_FRAGMENT)
+        fogFactor = ComputeFogFactor(vertexInput.positionCS.z);
+    #endif
+
+    output.uv = TRANSFORM_TEX(input.texcoord, _BaseMap);
+
+    // already normalized from normal transform to WS.
+    output.normalWS = normalInput.normalWS;
+#if defined(REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR) || defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
+    real sign = input.tangentOS.w * GetOddNegativeScale();
+    half4 tangentWS = half4(normalInput.tangentWS.xyz, sign);
+#endif
+#if defined(REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR)
+    output.tangentWS = tangentWS;
+#endif
+
+#if defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
+    half3 viewDirWS = GetWorldSpaceNormalizeViewDir(vertexInput.positionWS);
+    half3 viewDirTS = GetViewDirectionTangentSpace(tangentWS, output.normalWS, viewDirWS);
+    output.viewDirTS = viewDirTS;
+#endif
+
+    OUTPUT_LIGHTMAP_UV(input.staticLightmapUV, unity_LightmapST, output.staticLightmapUV);
+#ifdef DYNAMICLIGHTMAP_ON
+    output.dynamicLightmapUV = input.dynamicLightmapUV.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
+#endif
+    OUTPUT_SH(output.normalWS.xyz, output.vertexSH);
+#ifdef _ADDITIONAL_LIGHTS_VERTEX
+    output.fogFactorAndVertexLight = half4(fogFactor, vertexLight);
+#else
+    output.fogFactor = fogFactor;
+#endif
+
+#if defined(REQUIRES_WORLD_SPACE_POS_INTERPOLATOR)
+    output.positionWS = vertexInput.positionWS;
+#endif
+
+#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
+    output.shadowCoord = GetShadowCoord(vertexInput);
+#endif
+
+    output.positionCS = vertexInput.positionCS;
+
+    return output;
+&#125;
+
+// Used in Standard (Physically Based) shader
+void LitPassFragment(
+    Varyings input
+    , out half4 outColor : SV_Target0
+#ifdef _WRITE_RENDERING_LAYERS
+    , out float4 outRenderingLayers : SV_Target1
+#endif
+)
+&#123;
+    UNITY_SETUP_INSTANCE_ID(input);
+    UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+
+#if defined(_PARALLAXMAP)
+#if defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
+    half3 viewDirTS = input.viewDirTS;
+#else
+    half3 viewDirWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
+    half3 viewDirTS = GetViewDirectionTangentSpace(input.tangentWS, input.normalWS, viewDirWS);
+#endif
+    ApplyPerPixelDisplacement(viewDirTS, input.uv);
+#endif
+
+    SurfaceData surfaceData;
+    InitializeStandardLitSurfaceData(input.uv, surfaceData);
+
+#ifdef LOD_FADE_CROSSFADE
+    LODFadeCrossFade(input.positionCS);
+#endif
+
+    InputData inputData;
+    InitializeInputData(input, surfaceData.normalTS, inputData);
+    SETUP_DEBUG_TEXTURE_DATA(inputData, input.uv, _BaseMap);
+
+#ifdef _DBUFFER
+    ApplyDecalToSurfaceData(input.positionCS, surfaceData, inputData);
+#endif
+
+    half4 color = UniversalFragmentPBR(inputData, surfaceData);
+    color.rgb = MixFog(color.rgb, inputData.fogCoord);
+    color.a = OutputAlpha(color.a, IsSurfaceTypeTransparent(_Surface));
+
+    outColor = color;
+
+#ifdef _WRITE_RENDERING_LAYERS
+    uint renderingLayers = GetMeshRenderingLayer();
+    outRenderingLayers = float4(EncodeMeshRenderingLayer(renderingLayers), 0, 0, 0);
+#endif
+&#125;
+
+#endif
+</code></pre>
+<h2 id="引用光照头文件"><a href="#引用光照头文件" class="headerlink" title="引用光照头文件"></a>引用光照头文件</h2><pre><code class="language-hlsl">#include &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl&quot;
+</code></pre>
+<h2 id="引用LODGroup效果头文件"><a href="#引用LODGroup效果头文件" class="headerlink" title="引用LODGroup效果头文件"></a>引用LODGroup效果头文件</h2><pre><code class="language-hlsl">#if defined(LOD_FADE_CROSSFADE)
+    #include &quot;Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl&quot;
+#endif
+</code></pre>
+<p>可以参考 <a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_39574690/article/details/144896857">https://blog.csdn.net/qq_39574690/article/details/144896857</a></p>
+<h2 id="预定义视差映射标签"><a href="#预定义视差映射标签" class="headerlink" title="预定义视差映射标签"></a>预定义视差映射标签</h2><pre><code class="language-hlsl">// GLES2 has limited amount of interpolators
+#if defined(_PARALLAXMAP) &amp;&amp; !defined(SHADER_API_GLES)
+#define REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR
+#endif
+</code></pre>
+<h2 id="预定义法线贴图与视察映射需要切线空间标签"><a href="#预定义法线贴图与视察映射需要切线空间标签" class="headerlink" title="预定义法线贴图与视察映射需要切线空间标签"></a>预定义法线贴图与视察映射需要切线空间标签</h2><pre><code class="language-hlsl">#if (defined(_NORMALMAP) || (defined(_PARALLAXMAP) &amp;&amp; !defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR))) || defined(_DETAIL)
+#define REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR
+#endif
+</code></pre>
+<h2 id="声明顶点输入结构体"><a href="#声明顶点输入结构体" class="headerlink" title="声明顶点输入结构体"></a>声明顶点输入结构体</h2><pre><code class="language-hlsl">struct Attributes
+&#123;
+    float4 positionOS   : POSITION;
+    float3 normalOS     : NORMAL;
+    float4 tangentOS    : TANGENT;
+    float2 texcoord     : TEXCOORD0;
+    float2 staticLightmapUV   : TEXCOORD1;
+    float2 dynamicLightmapUV  : TEXCOORD2;
+    UNITY_VERTEX_INPUT_INSTANCE_ID
+&#125;;
+</code></pre>
+<h2 id="声明顶点输出结构体"><a href="#声明顶点输出结构体" class="headerlink" title="声明顶点输出结构体"></a>声明顶点输出结构体</h2><pre><code class="language-hlsl">struct Varyings
+&#123;
+    float2 uv                       : TEXCOORD0;
+
+#if defined(REQUIRES_WORLD_SPACE_POS_INTERPOLATOR)
+    float3 positionWS               : TEXCOORD1;
+#endif
+
+    float3 normalWS                 : TEXCOORD2;
+#if defined(REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR)
+    half4 tangentWS                : TEXCOORD3;    // xyz: tangent, w: sign
+#endif
+
+#ifdef _ADDITIONAL_LIGHTS_VERTEX
+    half4 fogFactorAndVertexLight   : TEXCOORD5; // x: fogFactor, yzw: vertex light
+#else
+    half  fogFactor                 : TEXCOORD5;
+#endif
+
+#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
+    float4 shadowCoord              : TEXCOORD6;
+#endif
+
+#if defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
+    half3 viewDirTS                : TEXCOORD7;
+#endif
+
+    DECLARE_LIGHTMAP_OR_SH(staticLightmapUV, vertexSH, 8);
+#ifdef DYNAMICLIGHTMAP_ON
+    float2  dynamicLightmapUV : TEXCOORD9; // Dynamic lightmap UVs
+#endif
+
+    float4 positionCS               : SV_POSITION;
+    UNITY_VERTEX_INPUT_INSTANCE_ID
+    UNITY_VERTEX_OUTPUT_STEREO
+&#125;;
+</code></pre>
+<details><summary> <font color="#007ACC">🐍 DECLARE_LIGHTMAP_OR_SH的定义是？ </font></summary>
+
+<pre><code class="language-hlsl">#if defined(LIGHTMAP_ON)
+    #define DECLARE_LIGHTMAP_OR_SH(lmName, shName, index) float2 lmName : TEXCOORD##index
+    #define OUTPUT_LIGHTMAP_UV(lightmapUV, lightmapScaleOffset, OUT) OUT.xy = lightmapUV.xy * lightmapScaleOffset.xy + lightmapScaleOffset.zw;
+    #define OUTPUT_SH(normalWS, OUT)
+#else
+    #define DECLARE_LIGHTMAP_OR_SH(lmName, shName, index) half3 shName : TEXCOORD##index
+    #define OUTPUT_LIGHTMAP_UV(lightmapUV, lightmapScaleOffset, OUT)
+    #define OUTPUT_SH(normalWS, OUT) OUT.xyz = SampleSHVertex(normalWS)
+#endif
+</code></pre>
+</details>
+
+<h2 id="初始化输入数据函数"><a href="#初始化输入数据函数" class="headerlink" title="初始化输入数据函数"></a>初始化输入数据函数</h2><pre><code class="language-hlsl">void InitializeInputData(Varyings input, half3 normalTS, out InputData inputData)
+&#123;
+    inputData = (InputData)0;
+
+#if defined(REQUIRES_WORLD_SPACE_POS_INTERPOLATOR)
+    inputData.positionWS = input.positionWS;
+#endif
+
+    half3 viewDirWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
+#if defined(_NORMALMAP) || defined(_DETAIL)
+    float sgn = input.tangentWS.w;      // should be either +1 or -1
+    float3 bitangent = sgn * cross(input.normalWS.xyz, input.tangentWS.xyz);
+    half3x3 tangentToWorld = half3x3(input.tangentWS.xyz, bitangent.xyz, input.normalWS.xyz);
+
+    #if defined(_NORMALMAP)
+    inputData.tangentToWorld = tangentToWorld;
+    #endif
+    inputData.normalWS = TransformTangentToWorld(normalTS, tangentToWorld);
+#else
+    inputData.normalWS = input.normalWS;
+#endif
+
+    inputData.normalWS = NormalizeNormalPerPixel(inputData.normalWS);
+    inputData.viewDirectionWS = viewDirWS;
+
+#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
+    inputData.shadowCoord = input.shadowCoord;
+#elif defined(MAIN_LIGHT_CALCULATE_SHADOWS)
+    inputData.shadowCoord = TransformWorldToShadowCoord(inputData.positionWS);
+#else
+    inputData.shadowCoord = float4(0, 0, 0, 0);
+#endif
+#ifdef _ADDITIONAL_LIGHTS_VERTEX
+    inputData.fogCoord = InitializeInputDataFog(float4(input.positionWS, 1.0), input.fogFactorAndVertexLight.x);
+    inputData.vertexLighting = input.fogFactorAndVertexLight.yzw;
+#else
+    inputData.fogCoord = InitializeInputDataFog(float4(input.positionWS, 1.0), input.fogFactor);
+#endif
+
+#if defined(DYNAMICLIGHTMAP_ON)
+    inputData.bakedGI = SAMPLE_GI(input.staticLightmapUV, input.dynamicLightmapUV, input.vertexSH, inputData.normalWS);
+#else
+    inputData.bakedGI = SAMPLE_GI(input.staticLightmapUV, input.vertexSH, inputData.normalWS);
+#endif
+
+    inputData.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(input.positionCS);
+    inputData.shadowMask = SAMPLE_SHADOWMASK(input.staticLightmapUV);
+
+    #if defined(DEBUG_DISPLAY)
+    #if defined(DYNAMICLIGHTMAP_ON)
+    inputData.dynamicLightmapUV = input.dynamicLightmapUV;
+    #endif
+    #if defined(LIGHTMAP_ON)
+    inputData.staticLightmapUV = input.staticLightmapUV;
+    #else
+    inputData.vertexSH = input.vertexSH;
+    #endif
+    #endif
+&#125;
+</code></pre>
+<details><summary> <font color="#007ACC">🐍 InputData定义是什么？ </font></summary>
+
+<pre><code class="language-hlsl">struct InputData
+&#123;
+    float3  positionWS;
+    float4  positionCS;
+    float3  normalWS;
+    half3   viewDirectionWS;
+    float4  shadowCoord;
+    half    fogCoord;
+    half3   vertexLighting;
+    half3   bakedGI;
+    float2  normalizedScreenSpaceUV;
+    half4   shadowMask;
+    half3x3 tangentToWorld;
+
+    #if defined(DEBUG_DISPLAY)
+    half2   dynamicLightmapUV;
+    half2   staticLightmapUV;
+    float3  vertexSH;
+
+    half3 brdfDiffuse;
+    half3 brdfSpecular;
+    float2 uv;
+    uint mipCount;
+
+    // texelSize :
+    // x = 1 / width
+    // y = 1 / height
+    // z = width
+    // w = height
+    float4 texelSize;
+
+    // mipInfo :
+    // x = quality settings minStreamingMipLevel
+    // y = original mip count for texture
+    // z = desired on screen mip level
+    // w = loaded mip level
+    float4 mipInfo;
+    #endif
+&#125;;
+</code></pre>
+</details>
+
+<p>其实这里面也没有什么要具体说的，主要就是初始化之后需要用的到输入数据，就是要用到的一些方向向量，灯光颜色，环境光颜色等，解释一下不常见的函数。</p>
+<ul>
+<li><p><strong>GetWorldSpaceNormalizeViewDir</strong>：获取世界空间归一化的观察向量：</p>
+<pre><code class="language-hlsl">  half3 GetWorldSpaceNormalizeViewDir(float3 positionWS)
+  &#123;
+      if (IsPerspectiveProjection())
+      &#123;
+          // Perspective
+          float3 V = GetCurrentViewPosition() - positionWS;
+          return half3(normalize(V));
+      &#125;
+      else
+      &#123;
+          // Orthographic
+          return half3(-GetViewForwardDir());
+      &#125;
+  &#125;
+
+  float3 GetCurrentViewPosition()
+  &#123;
+      // Currently we do not support Camera Relative Rendering so
+      // we simply return the _WorldSpaceCameraPos until then
+      return GetCameraPositionWS();
+
+      // We will replace the code above with this one once
+      // we start supporting Camera Relative Rendering
+      //#if defined(SHADERPASS) &amp;&amp; (SHADERPASS != SHADERPASS_SHADOWS)
+      //    return GetCameraPositionWS();
+      //#else
+      //    // This is a generic solution.
+      //    // However, for the primary camera, using &#39;_WorldSpaceCameraPos&#39; is better for cache locality,
+      //    // and in case we enable camera-relative rendering, we can statically set the position is 0.
+      //    return UNITY_MATRIX_I_V._14_24_34;
+      //#endif
+  &#125;
+
+  // Returns the forward (central) direction of the current view in the world space.
+  float3 GetViewForwardDir()
+  &#123;
+      float4x4 viewMat = GetWorldToViewMatrix();
+      return -viewMat[2].xyz;
+  &#125;
+</code></pre>
+</li>
+<li><p><strong>NormalizeNormalPerPixel</strong>：逐片元归一化法线：</p>
+<pre><code class="language-hlsl">  half3 NormalizeNormalPerPixel(half3 normalWS)
+  &#123;
+  // With XYZ normal map encoding we sporadically sample normals with near-zero-length causing Inf/NaN
+  #if defined(UNITY_NO_DXT5nm) &amp;&amp; defined(_NORMALMAP)
+      return SafeNormalize(normalWS);
+  #else
+      return normalize(normalWS);
+  #endif
+  &#125;
+
+  float3 NormalizeNormalPerPixel(float3 normalWS)
+  &#123;
+  #if defined(UNITY_NO_DXT5nm) &amp;&amp; defined(_NORMALMAP)
+      return SafeNormalize(normalWS);
+  #else
+      return normalize(normalWS);
+  #endif
+  &#125;
+</code></pre>
+</li>
+<li><p><strong>REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR</strong>：需要阴影坐标：</p>
+<pre><code class="language-hlsl">  #if !defined(_RECEIVE_SHADOWS_OFF)
+      #if defined(_MAIN_LIGHT_SHADOWS) || defined(_MAIN_LIGHT_SHADOWS_CASCADE) || defined(_MAIN_LIGHT_SHADOWS_SCREEN)
+          #define MAIN_LIGHT_CALCULATE_SHADOWS
+
+          #if defined(_MAIN_LIGHT_SHADOWS) || (defined(_MAIN_LIGHT_SHADOWS_SCREEN) &amp;&amp; !defined(_SURFACE_TYPE_TRANSPARENT))
+              #define REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR
+          #endif
+      #endif
+
+      #if defined(_ADDITIONAL_LIGHT_SHADOWS)
+          #define ADDITIONAL_LIGHT_CALCULATE_SHADOWS
+      #endif
+  #endif
+</code></pre>
+</li>
+<li><p><strong>InitializeInputDataFog</strong>：初始化InputData的雾效因子：</p>
+<pre><code class="language-hlsl">  real InitializeInputDataFog(float4 positionWS, real vertFogFactor)
+  &#123;
+      real fogFactor = 0.0;
+  #if defined(_FOG_FRAGMENT)
+      #if (defined(FOG_LINEAR) || defined(FOG_EXP) || defined(FOG_EXP2))
+          // Compiler eliminates unused math --&gt; matrix.column_z * vec
+          float viewZ = -(mul(UNITY_MATRIX_V, positionWS).z);
+          // View Z is 0 at camera pos, remap 0 to near plane.
+          float nearToFarZ = max(viewZ - _ProjectionParams.y, 0);
+          fogFactor = ComputeFogFactorZ0ToFar(nearToFarZ);
+      #endif
+  #else
+      fogFactor = vertFogFactor;
+  #endif
+      return fogFactor;
+  &#125;
+</code></pre>
+</li>
+<li><p><strong>GetNormalizedScreenSpaceUV</strong>：获取屏幕空间归一化uv坐标：</p>
+<pre><code class="language-hlsl">  float2 GetNormalizedScreenSpaceUV(float2 positionCS)
+  &#123;
+      float2 normalizedScreenSpaceUV = positionCS.xy * rcp(GetScaledScreenParams().xy);
+      TransformNormalizedScreenUV(normalizedScreenSpaceUV);
+      return normalizedScreenSpaceUV;
+  &#125;
+
+  float2 GetNormalizedScreenSpaceUV(float4 positionCS)
+  &#123;
+      return GetNormalizedScreenSpaceUV(positionCS.xy);
+  &#125;
+
+  void TransformNormalizedScreenUV(inout float2 uv)
+  &#123;
+      #if UNITY_UV_STARTS_AT_TOP
+      TransformScreenUV(uv, 1.0);
+      #endif
+  &#125;
+
+  void TransformScreenUV(inout float2 uv, float screenHeight)
+  &#123;
+      #if UNITY_UV_STARTS_AT_TOP
+      uv.y = screenHeight - (uv.y * _ScaleBiasRt.x + _ScaleBiasRt.y * screenHeight);
+      #endif
+  &#125;
+
+  void TransformScreenUV(inout float2 uv)
+  &#123;
+      #if UNITY_UV_STARTS_AT_TOP
+      TransformScreenUV(uv, GetScaledScreenParams().y);
+      #endif
+  &#125;
+
+</code></pre>
+</li>
+<li><p><strong>SAMPLE_SHADOWMASK</strong>：采样ShadowMask：</p>
+<pre><code class="language-hlsl">  #if defined(SHADOWS_SHADOWMASK) &amp;&amp; defined(LIGHTMAP_ON)
+      #define SAMPLE_SHADOWMASK(uv) SAMPLE_TEXTURE2D_LIGHTMAP(SHADOWMASK_NAME, SHADOWMASK_SAMPLER_NAME, uv SHADOWMASK_SAMPLE_EXTRA_ARGS);
+  #elif !defined (LIGHTMAP_ON)
+      #define SAMPLE_SHADOWMASK(uv) unity_ProbesOcclusion;
+  #else
+      #define SAMPLE_SHADOWMASK(uv) half4(1, 1, 1, 1);
+  #endif
+</code></pre>
+</li>
+</ul>
+<h2 id="顶点着色器LitPassVertex"><a href="#顶点着色器LitPassVertex" class="headerlink" title="顶点着色器LitPassVertex"></a>顶点着色器LitPassVertex</h2><pre><code class="language-hlsl">Varyings LitPassVertex(Attributes input)
+&#123;
+    Varyings output = (Varyings)0;
+
+    UNITY_SETUP_INSTANCE_ID(input);
+    UNITY_TRANSFER_INSTANCE_ID(input, output);
+    UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
+
+    VertexPositionInputs vertexInput = GetVertexPositionInputs(input.positionOS.xyz);
+
+    // normalWS and tangentWS already normalize.
+    // this is required to avoid skewing the direction during interpolation
+    // also required for per-vertex lighting and SH evaluation
+    VertexNormalInputs normalInput = GetVertexNormalInputs(input.normalOS, input.tangentOS);
+
+    half3 vertexLight = VertexLighting(vertexInput.positionWS, normalInput.normalWS);
+
+    half fogFactor = 0;
+    #if !defined(_FOG_FRAGMENT)
+        fogFactor = ComputeFogFactor(vertexInput.positionCS.z);
+    #endif
+
+    output.uv = TRANSFORM_TEX(input.texcoord, _BaseMap);
+
+    // already normalized from normal transform to WS.
+    output.normalWS = normalInput.normalWS;
+#if defined(REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR) || defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
+    real sign = input.tangentOS.w * GetOddNegativeScale();
+    half4 tangentWS = half4(normalInput.tangentWS.xyz, sign);
+#endif
+#if defined(REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR)
+    output.tangentWS = tangentWS;
+#endif
+
+#if defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
+    half3 viewDirWS = GetWorldSpaceNormalizeViewDir(vertexInput.positionWS);
+    half3 viewDirTS = GetViewDirectionTangentSpace(tangentWS, output.normalWS, viewDirWS);
+    output.viewDirTS = viewDirTS;
+#endif
+
+    OUTPUT_LIGHTMAP_UV(input.staticLightmapUV, unity_LightmapST, output.staticLightmapUV);
+#ifdef DYNAMICLIGHTMAP_ON
+    output.dynamicLightmapUV = input.dynamicLightmapUV.xy * unity_DynamicLightmapST.xy + unity_DynamicLightmapST.zw;
+#endif
+    OUTPUT_SH(output.normalWS.xyz, output.vertexSH);
+#ifdef _ADDITIONAL_LIGHTS_VERTEX
+    output.fogFactorAndVertexLight = half4(fogFactor, vertexLight);
+#else
+    output.fogFactor = fogFactor;
+#endif
+
+#if defined(REQUIRES_WORLD_SPACE_POS_INTERPOLATOR)
+    output.positionWS = vertexInput.positionWS;
+#endif
+
+#if defined(REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR)
+    output.shadowCoord = GetShadowCoord(vertexInput);
+#endif
+
+    output.positionCS = vertexInput.positionCS;
+
+    return output;
+&#125;
+</code></pre>
+<p>&emsp;顶点着色器也没有需要详细解释的，主要还是看一些函数，顶点Shader的作用就是初始化我们的顶点输出结构体而已。</p>
+<ul>
+<li><p><strong>GetVertexPositionInputs</strong>：获取顶点位置信息函数：</p>
+<pre><code class="language-hlsl">  VertexPositionInputs GetVertexPositionInputs(float3 positionOS)
+  &#123;
+      VertexPositionInputs input;
+      input.positionWS = TransformObjectToWorld(positionOS);
+      input.positionVS = TransformWorldToView(input.positionWS);
+      input.positionCS = TransformWorldToHClip(input.positionWS);
+
+      float4 ndc = input.positionCS * 0.5f;
+      input.positionNDC.xy = float2(ndc.x, ndc.y * _ProjectionParams.x) + ndc.w;
+      input.positionNDC.zw = input.positionCS.zw;
+
+      return input;
+  &#125;
+</code></pre>
+<details><summary> <font color="#007ACC">🐍 VertexPositionInputs定义是？ </font></summary>
+
+<pre><code class="language-hlsl">struct VertexPositionInputs
+&#123;
+    float3 positionWS; // World space position
+    float3 positionVS; // View space position
+    float4 positionCS; // Homogeneous clip space position
+    float4 positionNDC;// Homogeneous normalized device coordinates
+&#125;;
+</code></pre>
+</details>
+</li>
+<li><p><strong>GetVertexNormalInputs</strong>：获取顶点法线信息函数：</p>
+<pre><code class="language-hlsl">  VertexPositionInputs GetVertexPositionInputs(float3 positionOS)
+  &#123;
+      VertexPositionInputs input;
+      input.positionWS = TransformObjectToWorld(positionOS);
+      input.positionVS = TransformWorldToView(input.positionWS);
+      input.positionCS = TransformWorldToHClip(input.positionWS);
+
+      float4 ndc = input.positionCS * 0.5f;
+      input.positionNDC.xy = float2(ndc.x, ndc.y * _ProjectionParams.x) + ndc.w;
+      input.positionNDC.zw = input.positionCS.zw;
+
+      return input;
+  &#125;
+
+  VertexNormalInputs GetVertexNormalInputs(float3 normalOS)
+  &#123;
+      VertexNormalInputs tbn;
+      tbn.tangentWS = real3(1.0, 0.0, 0.0);
+      tbn.bitangentWS = real3(0.0, 1.0, 0.0);
+      tbn.normalWS = TransformObjectToWorldNormal(normalOS);
+      return tbn;
+  &#125;
+
+  VertexNormalInputs GetVertexNormalInputs(float3 normalOS, float4 tangentOS)
+  &#123;
+      VertexNormalInputs tbn;
+
+      // mikkts space compliant. only normalize when extracting normal at frag.
+      real sign = real(tangentOS.w) * GetOddNegativeScale();
+      tbn.normalWS = TransformObjectToWorldNormal(normalOS);
+      tbn.tangentWS = real3(TransformObjectToWorldDir(tangentOS.xyz));
+      tbn.bitangentWS = real3(cross(tbn.normalWS, float3(tbn.tangentWS))) * sign;
+      return tbn;
+  &#125;
+</code></pre>
+<details><summary> <font color="#007ACC">🐍 VertexNormalInputs定义是？ </font></summary>
+
+<pre><code class="language-hlsl">struct VertexNormalInputs
+&#123;
+    real3 tangentWS;
+    real3 bitangentWS;
+    float3 normalWS;
+&#125;;
+</code></pre>
+</details>
+</li>
+<li><p><strong>VertexLighting</strong>：获取顶点灯光颜色：</p>
+<pre><code class="language-hlsl">  half3 VertexLighting(float3 positionWS, half3 normalWS)
+  &#123;
+      half3 vertexLightColor = half3(0.0, 0.0, 0.0);
+
+  #ifdef _ADDITIONAL_LIGHTS_VERTEX
+      uint lightsCount = GetAdditionalLightsCount();
+      uint meshRenderingLayers = GetMeshRenderingLayer();
+
+      LIGHT_LOOP_BEGIN(lightsCount)
+          Light light = GetAdditionalLight(lightIndex, positionWS);
+
+  #ifdef _LIGHT_LAYERS
+      if (IsMatchingLightLayer(light.layerMask, meshRenderingLayers))
+  #endif
+      &#123;
+          half3 lightColor = light.color * light.distanceAttenuation;
+          vertexLightColor += LightingLambert(lightColor, light.direction, normalWS);
+      &#125;
+
+      LIGHT_LOOP_END
+  #endif
+
+      return vertexLightColor;
+  &#125;
+
+  half3 LightingLambert(half3 lightColor, half3 lightDir, half3 normal)
+  &#123;
+      half NdotL = saturate(dot(normal, lightDir));
+      return lightColor * NdotL;
+  &#125;
+</code></pre>
+</li>
+<li><p><strong>GetViewDirectionTangentSpace</strong>：获取切线空间视角方向：</p>
+<pre><code class="language-hlsl">  // Return view direction in tangent space, make sure tangentWS.w is already multiplied by GetOddNegativeScale()
+  half3 GetViewDirectionTangentSpace(half4 tangentWS, half3 normalWS, half3 viewDirWS)
+  &#123;
+      // must use interpolated tangent, bitangent and normal before they are normalized in the pixel shader.
+      half3 unnormalizedNormalWS = normalWS;
+      const half renormFactor = 1.0 / length(unnormalizedNormalWS);
+
+      // use bitangent on the fly like in hdrp
+      // IMPORTANT! If we ever support Flip on double sided materials ensure bitangent and tangent are NOT flipped.
+      half crossSign = (tangentWS.w &gt; 0.0 ? 1.0 : -1.0); // we do not need to multiple GetOddNegativeScale() here, as it is done in vertex shader
+      half3 bitang = crossSign * cross(normalWS.xyz, tangentWS.xyz);
+
+      half3 WorldSpaceNormal = renormFactor * normalWS.xyz;       // we want a unit length Normal Vector node in shader graph
+
+      // to preserve mikktspace compliance we use same scale renormFactor as was used on the normal.
+      // This is explained in section 2.2 in &quot;surface gradient based bump mapping framework&quot;
+      half3 WorldSpaceTangent = renormFactor * tangentWS.xyz;
+      half3 WorldSpaceBiTangent = renormFactor * bitang;
+
+      half3x3 tangentSpaceTransform = half3x3(WorldSpaceTangent, WorldSpaceBiTangent, WorldSpaceNormal);
+      half3 viewDirTS = mul(tangentSpaceTransform, viewDirWS);
+
+      return viewDirTS;
+  &#125;
+</code></pre>
+</li>
+<li><p><strong>OUTPUT_LIGHTMAP_UV</strong>：获取LightMap的uv：</p>
+<pre><code class="language-hlsl">  #if defined(LIGHTMAP_ON)
+      #define DECLARE_LIGHTMAP_OR_SH(lmName, shName, index) float2 lmName : TEXCOORD##index
+      #define OUTPUT_LIGHTMAP_UV(lightmapUV, lightmapScaleOffset, OUT) OUT.xy = lightmapUV.xy * lightmapScaleOffset.xy + lightmapScaleOffset.zw;
+      #define OUTPUT_SH(normalWS, OUT)
+  #else
+      #define DECLARE_LIGHTMAP_OR_SH(lmName, shName, index) half3 shName : TEXCOORD##index
+      #define OUTPUT_LIGHTMAP_UV(lightmapUV, lightmapScaleOffset, OUT)
+      #define OUTPUT_SH(normalWS, OUT) OUT.xyz = SampleSHVertex(normalWS)
+  #endif
+</code></pre>
+</li>
+</ul>
+<h2 id="片元着色器LitPassFragment"><a href="#片元着色器LitPassFragment" class="headerlink" title="片元着色器LitPassFragment"></a>片元着色器LitPassFragment</h2><pre><code class="language-hlsl">void LitPassFragment(Varyings input, out half4 outColor : SV_Target0
+#ifdef _WRITE_RENDERING_LAYERS
+    , out float4 outRenderingLayers : SV_Target1
+#endif
+)
+&#123;
+    UNITY_SETUP_INSTANCE_ID(input);
+    UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
+
+#if defined(_PARALLAXMAP)
+#if defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
+    half3 viewDirTS = input.viewDirTS;
+#else
+    half3 viewDirWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
+    half3 viewDirTS = GetViewDirectionTangentSpace(input.tangentWS, input.normalWS, viewDirWS);
+#endif
+    ApplyPerPixelDisplacement(viewDirTS, input.uv);
+#endif
+
+    SurfaceData surfaceData;
+    InitializeStandardLitSurfaceData(input.uv, surfaceData);
+
+#ifdef LOD_FADE_CROSSFADE
+    LODFadeCrossFade(input.positionCS);
+#endif
+
+    InputData inputData;
+    InitializeInputData(input, surfaceData.normalTS, inputData);
+    SETUP_DEBUG_TEXTURE_DATA(inputData, input.uv, _BaseMap);
+
+#ifdef _DBUFFER
+    ApplyDecalToSurfaceData(input.positionCS, surfaceData, inputData);
+#endif
+
+    half4 color = UniversalFragmentPBR(inputData, surfaceData);
+    color.rgb = MixFog(color.rgb, inputData.fogCoord);
+    color.a = OutputAlpha(color.a, IsSurfaceTypeTransparent(_Surface));
+
+    outColor = color;
+
+#ifdef _WRITE_RENDERING_LAYERS
+    uint renderingLayers = GetMeshRenderingLayer();
+    outRenderingLayers = float4(EncodeMeshRenderingLayer(renderingLayers), 0, 0, 0);
+#endif
+&#125;
+</code></pre>
+<p>&emsp;其实流程不多，可分为以下步骤：</p>
+<ol>
+<li><p>若有视差映射，对视差映射uv进行计算：</p>
+<pre><code class="language-hlsl"> #if defined(_PARALLAXMAP)
+ #if defined(REQUIRES_TANGENT_SPACE_VIEW_DIR_INTERPOLATOR)
+     half3 viewDirTS = input.viewDirTS;
+ #else
+     half3 viewDirWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
+     half3 viewDirTS = GetViewDirectionTangentSpace(input.tangentWS, input.normalWS, viewDirWS);
+ #endif
+     ApplyPerPixelDisplacement(viewDirTS, input.uv);
+ #endif
+</code></pre>
+</li>
+<li><p>初始化SurfaceData，也就是准备好贴图数据：</p>
+<pre><code class="language-hlsl"> SurfaceData surfaceData;
+ InitializeStandardLitSurfaceData(input.uv, surfaceData);
+</code></pre>
+</li>
+<li><p>若开启了LodGroup功能，计算LODFade：</p>
+<pre><code class="language-hlsl"> #ifdef LOD_FADE_CROSSFADE
+     LODFadeCrossFade(input.positionCS);
+ #endif
+</code></pre>
+</li>
+<li><p>初始化InputData，也就是处理顶点输入数据，准备之后所需要的方向向量，阴影等变量参数：</p>
+<pre><code class="language-hlsl"> InputData inputData;
+ InitializeInputData(input, surfaceData.normalTS, inputData);
+</code></pre>
+</li>
+<li><p>设置Debug贴图数据，这主要是用于Debug渲染的，实际自定义的时候可以不用管这个：</p>
+<pre><code class="language-hlsl"> SETUP_DEBUG_TEXTURE_DATA(inputData, input.uv, _BaseMap);
+</code></pre>
+</li>
+<li><p>将贴花数据应用在表面数据上</p>
+<pre><code class="language-hlsl"> #ifdef _DBUFFER
+     ApplyDecalToSurfaceData(input.positionCS, surfaceData, inputData);
+ #endif
+</code></pre>
+<p>具体代码如下：</p>
+<pre><code class="language-hlsl"> void ApplyDecalToSurfaceData(float4 positionCS, inout SurfaceData surfaceData, inout InputData inputData)
+ &#123;
+ #ifdef _SPECULAR_SETUP
+     half metallic = 0;
+     ApplyDecal(positionCS,
+         surfaceData.albedo,
+         surfaceData.specular,
+         inputData.normalWS,
+         metallic,
+         surfaceData.occlusion,
+         surfaceData.smoothness);
+ #else
+     half3 specular = 0;
+     ApplyDecal(positionCS,
+         surfaceData.albedo,
+         specular,
+         inputData.normalWS,
+         surfaceData.metallic,
+         surfaceData.occlusion,
+         surfaceData.smoothness);
+ #endif
+ &#125;
+
+ void ApplyDecal(float4 positionCS,
+     inout half3 baseColor,
+     inout half3 specularColor,
+     inout half3 normalWS,
+     inout half metallic,
+     inout half occlusion,
+     inout half smoothness)
+ &#123;
+     FETCH_DBUFFER(DBuffer, _DBufferTexture, int2(positionCS.xy));
+
+     DecalSurfaceData decalSurfaceData;
+     DECODE_FROM_DBUFFER(DBuffer, decalSurfaceData);
+
+     // using alpha compositing https://developer.nvidia.com/gpugems/GPUGems3/gpugems3_ch23.html, mean weight of 1 is neutral
+
+     // Note: We only test weight (i.e decalSurfaceData.xxx.w is &lt; 1.0) if it can save something
+     baseColor.xyz = baseColor.xyz * decalSurfaceData.baseColor.w + decalSurfaceData.baseColor.xyz;
+
+ #if defined(_DBUFFER_MRT2) || defined(_DBUFFER_MRT3)
+     // Always test the normal as we can have decompression artifact
+     if (decalSurfaceData.normalWS.w &lt; 1.0)
+     &#123;
+         normalWS.xyz = normalize(normalWS.xyz * decalSurfaceData.normalWS.w + decalSurfaceData.normalWS.xyz);
+     &#125;
+ #endif
+
+ #if defined(_DBUFFER_MRT3)
+ #ifdef _SPECULAR_SETUP
+     if (decalSurfaceData.MAOSAlpha.x &lt; 1.0)
+     &#123;
+         half3 decalSpecularColor = ComputeFresnel0((decalSurfaceData.baseColor.w &lt; 1.0) ? decalSurfaceData.baseColor.xyz : half3(1.0, 1.0, 1.0), decalSurfaceData.metallic, DEFAULT_SPECULAR_VALUE);
+         specularColor = specularColor * decalSurfaceData.MAOSAlpha + decalSpecularColor * (1.0f - decalSurfaceData.MAOSAlpha);
+     &#125;
+ #else
+     metallic = metallic * decalSurfaceData.MAOSAlpha + decalSurfaceData.metallic;
+ #endif
+
+     occlusion = occlusion * decalSurfaceData.MAOSAlpha + decalSurfaceData.occlusion;
+
+     smoothness = smoothness * decalSurfaceData.MAOSAlpha + decalSurfaceData.smoothness;
+ #endif
+ &#125;
+</code></pre>
+</li>
+<li><p>物理光照PBR（核心）：</p>
+<pre><code class="language-hlsl"> half4 color = UniversalFragmentPBR(inputData, surfaceData);
+</code></pre>
+<p>其核心代码如下：</p>
+<pre><code class="language-hlsl"> half4 UniversalFragmentPBR(InputData inputData, SurfaceData surfaceData)
+ &#123;
+     #if defined(_SPECULARHIGHLIGHTS_OFF)
+     bool specularHighlightsOff = true;
+     #else
+     bool specularHighlightsOff = false;
+     #endif
+     BRDFData brdfData;
+
+     // NOTE: can modify &quot;surfaceData&quot;...
+     InitializeBRDFData(surfaceData, brdfData);
+
+     #if defined(DEBUG_DISPLAY)
+     half4 debugColor;
+
+     if (CanDebugOverrideOutputColor(inputData, surfaceData, brdfData, debugColor))
+     &#123;
+         return debugColor;
+     &#125;
+     #endif
+
+     // Clear-coat calculation...
+     BRDFData brdfDataClearCoat = CreateClearCoatBRDFData(surfaceData, brdfData);
+     half4 shadowMask = CalculateShadowMask(inputData);
+     AmbientOcclusionFactor aoFactor = CreateAmbientOcclusionFactor(inputData, surfaceData);
+     uint meshRenderingLayers = GetMeshRenderingLayer();
+     Light mainLight = GetMainLight(inputData, shadowMask, aoFactor);
+
+     // NOTE: We don&#39;t apply AO to the GI here because it&#39;s done in the lighting calculation below...
+     MixRealtimeAndBakedGI(mainLight, inputData.normalWS, inputData.bakedGI);
+
+     LightingData lightingData = CreateLightingData(inputData, surfaceData);
+
+     lightingData.giColor = GlobalIllumination(brdfData, brdfDataClearCoat, surfaceData.clearCoatMask,
+                                             inputData.bakedGI, aoFactor.indirectAmbientOcclusion, inputData.positionWS,
+                                             inputData.normalWS, inputData.viewDirectionWS, inputData.normalizedScreenSpaceUV);
+ #ifdef _LIGHT_LAYERS
+     if (IsMatchingLightLayer(mainLight.layerMask, meshRenderingLayers))
+ #endif
+     &#123;
+         lightingData.mainLightColor = LightingPhysicallyBased(brdfData, brdfDataClearCoat,
+                                                             mainLight,
+                                                             inputData.normalWS, inputData.viewDirectionWS,
+                                                             surfaceData.clearCoatMask, specularHighlightsOff);
+     &#125;
+
+     #if defined(_ADDITIONAL_LIGHTS)
+     uint pixelLightCount = GetAdditionalLightsCount();
+
+     #if USE_FORWARD_PLUS
+     for (uint lightIndex = 0; lightIndex &lt; min(URP_FP_DIRECTIONAL_LIGHTS_COUNT, MAX_VISIBLE_LIGHTS); lightIndex++)
+     &#123;
+         FORWARD_PLUS_SUBTRACTIVE_LIGHT_CHECK
+
+         Light light = GetAdditionalLight(lightIndex, inputData, shadowMask, aoFactor);
+
+ #ifdef _LIGHT_LAYERS
+         if (IsMatchingLightLayer(light.layerMask, meshRenderingLayers))
+ #endif
+         &#123;
+             lightingData.additionalLightsColor += LightingPhysicallyBased(brdfData, brdfDataClearCoat, light,
+                                                                         inputData.normalWS, inputData.viewDirectionWS,
+                                                                         surfaceData.clearCoatMask, specularHighlightsOff);
+         &#125;
+     &#125;
+     #endif
+
+     LIGHT_LOOP_BEGIN(pixelLightCount)
+         Light light = GetAdditionalLight(lightIndex, inputData, shadowMask, aoFactor);
+
+ #ifdef _LIGHT_LAYERS
+         if (IsMatchingLightLayer(light.layerMask, meshRenderingLayers))
+ #endif
+         &#123;
+             lightingData.additionalLightsColor += LightingPhysicallyBased(brdfData, brdfDataClearCoat, light,
+                                                                         inputData.normalWS, inputData.viewDirectionWS,
+                                                                         surfaceData.clearCoatMask, specularHighlightsOff);
+         &#125;
+     LIGHT_LOOP_END
+     #endif
+
+     #if defined(_ADDITIONAL_LIGHTS_VERTEX)
+     lightingData.vertexLightingColor += inputData.vertexLighting * brdfData.diffuse;
+     #endif
+
+ #if REAL_IS_HALF
+     // Clamp any half.inf+ to HALF_MAX
+     return min(CalculateFinalColor(lightingData, surfaceData.alpha), HALF_MAX);
+ #else
+     return CalculateFinalColor(lightingData, surfaceData.alpha);
+ #endif
+ &#125;
+</code></pre>
+<p>我们一个一个来看。</p>
+<ol>
+<li><p>首先是定义了一个bool变量来决定是不是关闭了高光：</p>
+<pre><code class="language-hlsl">  #if defined(_SPECULARHIGHLIGHTS_OFF)
+  bool specularHighlightsOff = true;
+  #else
+  bool specularHighlightsOff = false;
+  #endif
+</code></pre>
+</li>
+<li><p>然后定义BRDFData变量并且初始化它：</p>
+<pre><code class="language-hlsl">  BRDFData brdfData;
+
+  // NOTE: can modify &quot;surfaceData&quot;...
+  InitializeBRDFData(surfaceData, brdfData);
+</code></pre>
+<details><summary> <font color="#007ACC">🐍 BRDFData的定义是？ </font></summary>
+
+<pre><code class="language-hlsl">    struct BRDFData
+    &#123;
+        half3 albedo;
+        half3 diffuse;
+        half3 specular;
+        half reflectivity;
+        half perceptualRoughness;
+        half roughness;
+        half roughness2;
+        half grazingTerm;
+
+        // We save some light invariant BRDF terms so we don&#39;t have to recompute
+        // them in the light loop. Take a look at DirectBRDF function for detailed explaination.
+        half normalizationTerm;     // roughness * 4.0 + 2.0
+        half roughness2MinusOne;    // roughness^2 - 1.0
+    &#125;;
+</code></pre>
+</details>
+
+<details><summary> <font color="#007ACC">🐍 InitializeBRDFData函数详解 </font></summary>
+
+<pre><code class="language-hlsl">    // Initialize BRDFData for material, managing both specular and metallic setup using shader keyword _SPECULAR_SETUP.
+    inline void InitializeBRDFData(half3 albedo, half metallic, half3 specular, half smoothness, inout half alpha, out BRDFData outBRDFData)
+    &#123;
+    #ifdef _SPECULAR_SETUP
+        half reflectivity = ReflectivitySpecular(specular);
+        half oneMinusReflectivity = half(1.0) - reflectivity;
+        half3 brdfDiffuse = albedo * oneMinusReflectivity;
+        half3 brdfSpecular = specular;
+    #else
+        half oneMinusReflectivity = OneMinusReflectivityMetallic(metallic);
+        half reflectivity = half(1.0) - oneMinusReflectivity;
+        half3 brdfDiffuse = albedo * oneMinusReflectivity;
+        half3 brdfSpecular = lerp(kDieletricSpec.rgb, albedo, metallic);
+    #endif
+
+        InitializeBRDFDataDirect(albedo, brdfDiffuse, brdfSpecular, reflectivity, oneMinusReflectivity, smoothness, alpha, outBRDFData);
+    &#125;
+
+    inline void InitializeBRDFData(inout SurfaceData surfaceData, out BRDFData brdfData)
+    &#123;
+        InitializeBRDFData(surfaceData.albedo, surfaceData.metallic, surfaceData.specular, surfaceData.smoothness, surfaceData.alpha, brdfData);
+    &#125;
+</code></pre>
+<blockquote>
+<p>有两个函数，我们主要就看代码多的实现细节，也就是第一个函数。<br>  在第一个函数中我们可以看到一开始就先区分了金属工作流和高光工作流：</p>
+</blockquote>
+<pre><code class="language-hlsl">    #ifdef _SPECULAR_SETUP
+        half reflectivity = ReflectivitySpecular(specular);
+        half oneMinusReflectivity = half(1.0) - reflectivity;
+        half3 brdfDiffuse = albedo * oneMinusReflectivity;
+        half3 brdfSpecular = specular;
+    #else
+        half oneMinusReflectivity = OneMinusReflectivityMetallic(metallic);
+        half reflectivity = half(1.0) - oneMinusReflectivity;
+        half3 brdfDiffuse = albedo * oneMinusReflectivity;
+        half3 brdfSpecular = lerp(kDieletricSpec.rgb, albedo, metallic);
+    #endif
+</code></pre>
+<ul>
+<li><p>当开启 <strong>_SPECULAR_SETUP</strong> 关键字的时候启用高光工作流：</p>
+<ul>
+<li><strong>reflectivity</strong>：镜面反射率，由高光颜色获得：</li>
+</ul>
+<pre><code class="language-hlsl">    half ReflectivitySpecular(half3 specular)
+    &#123;
+    #if defined(SHADER_API_GLES)
+        return specular.r; // Red channel - because most metals are either monochrome or with redish/yellowish tint
+    #else
+        return Max3(specular.r, specular.g, specular.b);
+    #endif
+    &#125;
+</code></pre>
+<ul>
+<li><strong>oneMinusReflectivity</strong>:漫反射率，与镜面反射率相加为1。</li>
+<li><strong>brdfDiffuse</strong>：物理的漫反射颜色分量，镜面反射率越低，漫反射越高。</li>
+<li><strong>brdfSpecular</strong>:镜面反射颜色的分量，即高光色。</li>
+</ul>
+</li>
+<li><p>当关闭 <strong>_SPECULAR_SETUP</strong> 关键字的时候启用金属工作流：</p>
+<ul>
+<li><strong>oneMinusReflectivity</strong>:漫反射率，由金属度插值介电质常数与0，当金属度越高，也就越能反射高光，漫反射率也就越低，反之金属度越低，漫反射率也就越高，越能反射物体本身的颜色，但最高为$1-0.04&#x3D;0.96$，其中$0.04$为最低介电质常数，为经验值：</li>
+</ul>
+<pre><code class="language-hlsl">    half OneMinusReflectivityMetallic(half metallic)
+    &#123;
+        // We&#39;ll need oneMinusReflectivity, so
+        //   1-reflectivity = 1-lerp(dielectricSpec, 1, metallic) = lerp(1-dielectricSpec, 0, metallic)
+        // store (1-dielectricSpec) in kDielectricSpec.a, then
+        //   1-reflectivity = lerp(alpha, 0, metallic) = alpha + metallic*(0 - alpha) =
+        //                  = alpha - metallic * alpha
+        half oneMinusDielectricSpec = kDielectricSpec.a;
+        return oneMinusDielectricSpec - metallic * oneMinusDielectricSpec;
+    &#125;
+</code></pre>
+<ul>
+<li><strong>reflectivity</strong>：镜面反射率，与漫反射率相加为1。</li>
+<li><strong>brdfDiffuse</strong>：物理的漫反射颜色分量，镜面反射率越低，漫反射越高。</li>
+<li><strong>brdfSpecular</strong>:镜面反射颜色的分量，即高光色，因为是金属度调节，当金属度越高，那么高光反射的颜色越接近基础色（比如黄金的高光也是金色），而金属度越低，高光颜色越接近中性灰。</li>
+</ul>
+  <details><summary> <font color="#007ACC">🐍 为什么两种工作流的计算看起来不太一样？ </font></summary>
+
+<p>  首先我们要明确一个前提：材质的总反射能量&#x3D;漫反射能量+镜面反射能量。<br>  这两种工作流的差异，本质是用不同的参数体系来分配这两部分能量，最终实现相同的物理效果，但适配不同的美术调优习惯。<br>  正因为体系不同，导致了反射分量计算逻辑的差异：</p>
+<ul>
+<li>金属度工作流：用 <strong>metallic</strong> 参数来约束漫反射与镜面反射的分配（金属无漫反射）。</li>
+<li>高光工作流：用 <strong>specular</strong> 的亮度来分配能量（高光越亮，镜面反射率越高，漫反射越少）。<blockquote>
+<p>bedfDiffuse计算差异：</p>
+</blockquote>
+</li>
+</ul>
+<p>  金属度工作流：<code>brdfDiffuse = albedo × lerp(0.96, 0.0, metallic);</code></p>
+<ul>
+<li>强制金属无漫反射（真实世界中金属的漫反射趋近于 0，所有反射都是镜面反射），而非金属保留 96% 的漫反射能量（符合 4% 基础镜面反射率的物理规律）。</li>
+</ul>
+<p>  高光工作流：<code>brdfDiffuse = albedo × Luminance(specular);</code></p>
+<ul>
+<li>让美术直接通过高光色控制反射能量分配，高光色越亮（反射率越高），漫反射就越少，无需区分 “金属 &#x2F; 非金属”，适配需要精准调高光颜色的场景（比如彩色高光的塑料玩具）。<blockquote>
+<p>bedfSpecular计算差异：</p>
+</blockquote>
+</li>
+</ul>
+<p>  金属度工作流：<code>brdfSpecular = lerp(kDieletricSpec.rgb, albedo, metallic);</code></p>
+<ul>
+<li>非金属（ <strong>metallic&#x3D;0</strong> ）时，镜面反射使用中性灰，符合物理，不需要美术手动调节；金属（ <strong>metallic&#x3D;1</strong> ）时，镜面反射色等于基础色（真实金属的镜面反射就是自身颜色，比如黄金的高光也是金色）；半金属线性插值过渡，保证视觉自然。</li>
+</ul>
+<p>  高光工作流：<code>brdfDiffuse = albedo × Luminance(specular);</code></p>
+<ul>
+<li>把高光色的控制权完全交给美术，想让高光偏红就设 <code>specular=(1,0,0)</code>，想让高光偏蓝就设 <code>specular=(0,0,1)</code>，无需受 “金属 &#x2F; 非金属” 的物理规则约束，适配非写实风格（卡通、奇幻材质）或需要特殊高光的写实场景（比如带彩色高光的车漆）。    </details></li>
+</ul>
+</li>
+</ul>
+<p>  然后就是初始化直接光BRDF：<strong>InitializeBRDFDataDirect</strong>：</p>
+<pre><code class="language-hlsl">    inline void InitializeBRDFDataDirect(half3 albedo, half3 diffuse, half3 specular, half reflectivity, half oneMinusReflectivity, half smoothness, inout half alpha, out BRDFData outBRDFData)
+    &#123;
+        outBRDFData = (BRDFData)0;
+        outBRDFData.albedo = albedo;
+        outBRDFData.diffuse = diffuse;
+        outBRDFData.specular = specular;
+        outBRDFData.reflectivity = reflectivity;
+
+        outBRDFData.perceptualRoughness = PerceptualSmoothnessToPerceptualRoughness(smoothness);
+        outBRDFData.roughness           = max(PerceptualRoughnessToRoughness(outBRDFData.perceptualRoughness), HALF_MIN_SQRT);
+        outBRDFData.roughness2          = max(outBRDFData.roughness * outBRDFData.roughness, HALF_MIN);
+        outBRDFData.grazingTerm         = saturate(smoothness + reflectivity);
+        outBRDFData.normalizationTerm   = outBRDFData.roughness * half(4.0) + half(2.0);
+        outBRDFData.roughness2MinusOne  = outBRDFData.roughness2 - half(1.0);
+
+        // Input is expected to be non-alpha-premultiplied while ROP is set to pre-multiplied blend.
+        // We use input color for specular, but (pre-)multiply the diffuse with alpha to complete the standard alpha blend equation.
+        // In shader: Cs&#39; = Cs * As, in ROP: Cs&#39; + Cd(1-As);
+        // i.e. we only alpha blend the diffuse part to background (transmittance).
+        #if defined(_ALPHAPREMULTIPLY_ON)
+            // TODO: would be clearer to multiply this once to accumulated diffuse lighting at end instead of the surface property.
+            outBRDFData.diffuse *= alpha;
+        #endif
+    &#125;
+
+    // Legacy: do not call, will not correctly initialize albedo property.
+    inline void InitializeBRDFDataDirect(half3 diffuse, half3 specular, half reflectivity, half oneMinusReflectivity, half smoothness, inout half alpha, out BRDFData outBRDFData)
+    &#123;
+        InitializeBRDFDataDirect(half3(0.0, 0.0, 0.0), diffuse, specular, reflectivity, oneMinusReflectivity, smoothness, alpha, outBRDFData);
+    &#125;
+</code></pre>
+<p>  这里就没有什么多说的，这里就是给BRDFData数据赋值为后面PBR计算提供数据。<br>  </details></p>
+</li>
+<li><p>接着有一个Debug声明函数，这个函数就是为了Debug用的，不作详解：</p>
+<pre><code class="language-hlsl">  #if defined(DEBUG_DISPLAY)
+  half4 debugColor;
+
+  if (CanDebugOverrideOutputColor(inputData, surfaceData, brdfData, debugColor))
+  &#123;
+      return debugColor;
+  &#125;
+  #endif
+</code></pre>
+</li>
+<li><p>然后跳过清漆BRDF计算：</p>
+<pre><code class="language-hlsl">  BRDFData brdfDataClearCoat = CreateClearCoatBRDFData(surfaceData, brdfData);
+</code></pre>
+</li>
+<li><p>计算ShdowMask:</p>
+<pre><code class="language-hlsl">  half4 shadowMask = CalculateShadowMask(inputData);
+</code></pre>
+<details><summary> <font color="#007ACC">🐍 CalculateShadowMask的定义是？ </font></summary>
+
+<pre><code class="language-hlsl">half4 CalculateShadowMask(InputData inputData)
+&#123;
+    // To ensure backward compatibility we have to avoid using shadowMask input, as it is not present in older shaders
+    #if defined(SHADOWS_SHADOWMASK) &amp;&amp; defined(LIGHTMAP_ON)
+    half4 shadowMask = inputData.shadowMask;
+    #elif !defined (LIGHTMAP_ON)
+    half4 shadowMask = unity_ProbesOcclusion;
+    #else
+    half4 shadowMask = half4(1, 1, 1, 1);
+    #endif
+
+    return shadowMask;
+&#125;
+</code></pre>
+</details>
+</li>
+<li><p>创建AO因子 <strong>AmbientOcclusionFactor</strong> ：</p>
+<pre><code class="language-hlsl">  AmbientOcclusionFactor aoFactor = CreateAmbientOcclusionFactor(inputData, surfaceData);
+</code></pre>
+<details><summary> <font color="#007ACC">🐍 AmbientOcclusionFactor的定义是？ </font></summary>
+
+<pre><code class="language-hlsl">struct AmbientOcclusionFactor
+&#123;
+    half indirectAmbientOcclusion;
+    half directAmbientOcclusion;
+&#125;;
+</code></pre>
+<blockquote>
+<p>包含直接光AO和间接光AO。</p>
+</blockquote>
+</details>
+<details><summary> <font color="#007ACC">🐍 CreateAmbientOcclusionFactor的定义是？ </font></summary>
+
+<pre><code class="language-hlsl">AmbientOcclusionFactor CreateAmbientOcclusionFactor(float2 normalizedScreenSpaceUV, half occlusion)
+&#123;
+    AmbientOcclusionFactor aoFactor = GetScreenSpaceAmbientOcclusion(normalizedScreenSpaceUV);
+
+    aoFactor.indirectAmbientOcclusion = min(aoFactor.indirectAmbientOcclusion, occlusion);
+    return aoFactor;
+&#125;
+
+AmbientOcclusionFactor CreateAmbientOcclusionFactor(InputData inputData, SurfaceData surfaceData)
+&#123;
+    return CreateAmbientOcclusionFactor(inputData.normalizedScreenSpaceUV, surfaceData.occlusion);
+&#125;
+</code></pre>
+<blockquote>
+<p>可以看到函数时先计算了屏幕空间AO，而简接光AO是取屏幕空间AO和遮蔽图计算出的occlusion中的最小值。</p>
+</blockquote>
+</details>
+<details><summary> <font color="#007ACC">🐍 GetScreenSpaceAmbientOcclusion的定义是？ </font></summary>
+
+<pre><code class="language-hlsl">half SampleAmbientOcclusion(float2 normalizedScreenSpaceUV)
+&#123;
+    float2 uv = UnityStereoTransformScreenSpaceTex(normalizedScreenSpaceUV);
+    return half(SAMPLE_TEXTURE2D_X(_ScreenSpaceOcclusionTexture, sampler_ScreenSpaceOcclusionTexture, uv).x);
+&#125;
+
+AmbientOcclusionFactor GetScreenSpaceAmbientOcclusion(float2 normalizedScreenSpaceUV)
+&#123;
+    AmbientOcclusionFactor aoFactor;
+
+    #if defined(_SCREEN_SPACE_OCCLUSION) &amp;&amp; !defined(_SURFACE_TYPE_TRANSPARENT)
+        float ssao = saturate(SampleAmbientOcclusion(normalizedScreenSpaceUV) + (1.0 - _AmbientOcclusionParam.x));
+        aoFactor.indirectAmbientOcclusion = ssao;
+        aoFactor.directAmbientOcclusion = lerp(half(1.0), ssao, _AmbientOcclusionParam.w);
+    #else
+        aoFactor.directAmbientOcclusion = half(1.0);
+        aoFactor.indirectAmbientOcclusion = half(1.0);
+    #endif
+
+    #if defined(DEBUG_DISPLAY)
+    switch(_DebugLightingMode)
+    &#123;
+        case DEBUGLIGHTINGMODE_LIGHTING_WITHOUT_NORMAL_MAPS:
+            aoFactor.directAmbientOcclusion = 0.5;
+            aoFactor.indirectAmbientOcclusion = 0.5;
+            break;
+
+        case DEBUGLIGHTINGMODE_LIGHTING_WITH_NORMAL_MAPS:
+            aoFactor.directAmbientOcclusion *= 0.5;
+            aoFactor.indirectAmbientOcclusion *= 0.5;
+            break;
+    &#125;
+    #endif
+
+    return aoFactor;
+&#125;
+</code></pre>
+<blockquote>
+<p>首先我们忽略 <strong>DEBUG_DISPLAY</strong> 预定义中的代码，这部分是Debug的，可以不管。然后可以看到，返回数值有两种情况：</p>
+</blockquote>
+<ol>
+<li>定义了屏幕空间AO预定义标签 <strong>_SCREEN_SPACE_OCCLUSION</strong> (也就是SSAO)并且不是透明物体：<br><code>hlsl  float ssao = saturate(SampleAmbientOcclusion(normalizedScreenSpaceUV) + (1.0 - _AmbientOcclusionParam.x));  aoFactor.indirectAmbientOcclusion = ssao;  aoFactor.directAmbientOcclusion = lerp(half(1.0), ssao, _AmbientOcclusionParam.w); </code><br>- <strong>SampleAmbientOcclusion</strong>：采样SSAO贴图（ <strong>_ScreenSpaceOcclusionTexture</strong> ）, <strong>UnityStereoTransformScreenSpaceTex</strong>函数看起来花里胡哨，其实就是返回一个uv而已：<pre><code class="language-hlsl">#if defined(UNITY_SINGLE_PASS_STEREO)
+    float2 TransformStereoScreenSpaceTex(float2 uv, float w)
+    &#123;
+        // TODO: RVS support can be added here, if Universal decides to support it
+        float4 scaleOffset = unity_StereoScaleOffset[unity_StereoEyeIndex];
+        return uv.xy * scaleOffset.xy + scaleOffset.zw * w;
+    &#125;
+
+    float2 UnityStereoTransformScreenSpaceTex(float2 uv)
+    &#123;
+        return TransformStereoScreenSpaceTex(saturate(uv), 1.0);
+    &#125;
+#else
+    #define UnityStereoTransformScreenSpaceTex(uv) uv
+#endif // defined(UNITY_SINGLE_PASS_STEREO)
+</code></pre>
+</li>
+</ol>
+<pre><code>- **_AmbientOcclusionParam**:
+  ```hlsl
+  // x: SSAO Enabled/Disabled (Needed for situations when OFF keyword is stripped out but feature disabled in runtime)
+  // yz are currently unused
+  // w: directLightStrength
+  half4 _AmbientOcclusionParam;
+  ```
+</code></pre>
+</li>
+<li><p>获取物体的RenderLayer，用于对渲染计算的优化：</p>
+<pre><code class="language-hlsl">  uint meshRenderingLayers = GetMeshRenderingLayer();
+</code></pre>
+</li>
+<li><p>获取主光源数据：</p>
+<pre><code class="language-hlsl">  Light mainLight = GetMainLight(inputData, shadowMask, aoFactor);
+</code></pre>
+</li>
+<li><p>烘焙光照与实时阴影融合：</p>
+<pre><code class="language-hlsl"> MixRealtimeAndBakedGI(mainLight, inputData.normalWS, inputData.bakedGI);
+</code></pre>
+ <details><summary> <font color="#007ACC">🐍 MixRealtimeAndBakedGI的定义是？ </font></summary>
+      
+<pre><code class="language-hlsl">void MixRealtimeAndBakedGI(inout Light light, half3 normalWS, inout half3 bakedGI)
+&#123;
+#if defined(LIGHTMAP_ON) &amp;&amp; defined(_MIXED_LIGHTING_SUBTRACTIVE)
+    bakedGI = SubtractDirectMainLightFromLightmap(light, normalWS, bakedGI);
+#endif
+&#125;
+</code></pre>
+ </details>
+
+  <details><summary> <font color="#007ACC">🐍 SubtractDirectMainLightFromLightmap的定义是？ </font></summary>
+
+<pre><code class="language-hlsl">half3 SubtractDirectMainLightFromLightmap(Light mainLight, half3 normalWS, half3 bakedGI)
+&#123;
+    // Let&#39;s try to make realtime shadows work on a surface, which already contains
+    // baked lighting and shadowing from the main sun light.
+    // Summary:
+    // 1) Calculate possible value in the shadow by subtracting estimated light contribution from the places occluded by realtime shadow:
+    //      a) preserves other baked lights and light bounces
+    //      b) eliminates shadows on the geometry facing away from the light
+    // 2) Clamp against user defined ShadowColor.
+    // 3) Pick original lightmap value, if it is the darkest one.
+
+
+    // 1) Gives good estimate of illumination as if light would&#39;ve been shadowed during the bake.
+    // We only subtract the main direction light. This is accounted in the contribution term below.
+    half shadowStrength = GetMainLightShadowStrength();
+    half contributionTerm = saturate(dot(mainLight.direction, normalWS));
+    half3 lambert = mainLight.color * contributionTerm;
+    half3 estimatedLightContributionMaskedByInverseOfShadow = lambert * (1.0 - mainLight.shadowAttenuation);
+    half3 subtractedLightmap = bakedGI - estimatedLightContributionMaskedByInverseOfShadow;
+
+    // 2) Allows user to define overall ambient of the scene and control situation when realtime shadow becomes too dark.
+    half3 realtimeShadow = max(subtractedLightmap, _SubtractiveShadowColor.xyz);
+    realtimeShadow = lerp(bakedGI, realtimeShadow, shadowStrength);
+
+    // 3) Pick darkest color
+    return min(bakedGI, realtimeShadow);
+&#125;
+</code></pre>
+  </details>
+  
+  <details><summary> <font color="#007ACC">🐍 为什么要混合？ </font></summary>
+
+<p>  该函数通过从烘焙光照中扣除 “本应被实时阴影遮挡的主光源贡献”，并结合自定义的阴影颜色做限制，最终选择 “烘焙值” 和 “修正后实时阴影值” 中更暗的结果，实现烘焙光照与实时阴影的自然融合。</p>
+<blockquote>
+<p>核心解决的问题：<br>如果场景烘焙了主光源（比如太阳光）的光照，但运行时需要动态物体投射实时阴影到烘焙表面，直接叠加实时阴影会导致 “烘焙亮区被实时阴影完全覆盖”（过暗），该函数通过精准扣除主光源贡献，保留烘焙的间接光 &#x2F; 其他光源，让实时阴影更自然。</p>
+</blockquote>
+<p>  AI解释如下：</p>
+<pre><code class="language-hlsl">    half3 SubtractDirectMainLightFromLightmap(Light mainLight, half3 normalWS, half3 bakedGI)
+    &#123;
+        // ========== 步骤1：计算“应扣除的主光源贡献”（模拟实时阴影遮挡） ==========
+        // 1.1 获取用户设置的主光源阴影强度（0=无实时阴影，1=完全生效）
+        half shadowStrength = GetMainLightShadowStrength();
+        
+        // 1.2 计算“表面朝向与主光源的夹角贡献”：仅向光面（dot&gt;0）才扣除主光源，背光面不处理
+        // saturate：将结果限制在0~1（避免dot为负时出现错误扣除）
+        half contributionTerm = saturate(dot(mainLight.direction, normalWS));
+        
+        // 1.3 计算主光源对当前像素的兰伯特光照贡献（基础漫反射模型）
+        half3 lambert = mainLight.color * contributionTerm;
+        
+        // 1.4 计算“本应被实时阴影遮挡的主光源贡献”：
+        // (1 - shadowAttenuation)：阴影区域该值=1（完全遮挡），无阴影区域=0（不遮挡）
+        // 最终：阴影区 = 主光源贡献 × 1（扣除全部），无阴影区 = 主光源贡献 × 0（不扣除）
+        half3 estimatedLightContributionMaskedByInverseOfShadow = lambert * (1.0 - mainLight.shadowAttenuation);
+        
+        // 1.5 从烘焙光照中扣除上述贡献：得到“模拟烘焙时就有实时阴影”的光照值
+        // 保留了烘焙的间接光、其他光源，仅扣除主光源的阴影部分
+        half3 subtractedLightmap = bakedGI - estimatedLightContributionMaskedByInverseOfShadow;
+
+        // ========== 步骤2：限制阴影过暗 + 混合阴影强度 ==========
+        // 2.1 用用户自定义阴影色限制：避免扣除后过黑（比如阴影区不能比_SubtractiveShadowColor更暗）
+        half3 realtimeShadow = max(subtractedLightmap, _SubtractiveShadowColor.xyz);
+        
+        // 2.2 按阴影强度混合“原始烘焙值”和“修正后阴影值”：shadowStrength=0时完全用烘焙值
+        realtimeShadow = lerp(bakedGI, realtimeShadow, shadowStrength);
+
+        // ========== 步骤3：选择更暗的值（保证阴影只暗不亮，符合物理） ==========
+        // min：如果修正后的阴影值比烘焙值亮，就用烘焙值；否则用阴影值
+        return min(bakedGI, realtimeShadow);
+    &#125;
+</code></pre>
+  </details>
+
+</li>
+<li><p>创建灯光数据 <strong>LightingData</strong> 变量：</p>
+</li>
+</ol>
+<pre><code class="language-hlsl">  LightingData lightingData = CreateLightingData(inputData, surfaceData);
+</code></pre>
+   <details><summary> <font color="#007ACC">🐍 CreateLightingData的定义是？ </font></summary>
+
+<pre><code class="language-hlsl">  LightingData CreateLightingData(InputData inputData, SurfaceData surfaceData)
+  &#123;
+      LightingData lightingData;
+
+      lightingData.giColor = inputData.bakedGI;
+      lightingData.emissionColor = surfaceData.emission;
+      lightingData.vertexLightingColor = 0;
+      lightingData.mainLightColor = 0;
+      lightingData.additionalLightsColor = 0;
+
+      return lightingData;
+  &#125;
+</code></pre>
+   </details>
+
+<ol start="11">
+<li>GI光计算：</li>
+</ol>
+<pre><code class="language-hlsl">  lightingData.giColor = GlobalIllumination(brdfData, brdfDataClearCoat, surfaceData.clearCoatMask,
+                                          inputData.bakedGI, aoFactor.indirectAmbientOcclusion, inputData.positionWS,
+                                          inputData.normalWS, inputData.viewDirectionWS, inputData.normalizedScreenSpaceUV);
+</code></pre>
+   <details><summary> <font color="#007ACC">🐍 GlobalIllumination的详解 </font></summary>
+
+<pre><code class="language-hlsl">  half3 GlobalIllumination(BRDFData brdfData, BRDFData brdfDataClearCoat, float clearCoatMask,
+      half3 bakedGI, half occlusion, float3 positionWS,
+      half3 normalWS, half3 viewDirectionWS, float2 normalizedScreenSpaceUV)
+  &#123;
+      half3 reflectVector = reflect(-viewDirectionWS, normalWS);
+      half NoV = saturate(dot(normalWS, viewDirectionWS));
+      half fresnelTerm = Pow4(1.0 - NoV);
+
+      half3 indirectDiffuse = bakedGI;
+      half3 indirectSpecular = GlossyEnvironmentReflection(reflectVector, positionWS, brdfData.perceptualRoughness, 1.0h, normalizedScreenSpaceUV);
+
+      half3 color = EnvironmentBRDF(brdfData, indirectDiffuse, indirectSpecular, fresnelTerm);
+
+      if (IsOnlyAOLightingFeatureEnabled())
+      &#123;
+          color = half3(1,1,1); // &quot;Base white&quot; for AO debug lighting mode
+      &#125;
+
+  #if defined(_CLEARCOAT) || defined(_CLEARCOATMAP)
+      half3 coatIndirectSpecular = GlossyEnvironmentReflection(reflectVector, positionWS, brdfDataClearCoat.perceptualRoughness, 1.0h, normalizedScreenSpaceUV);
+      // TODO: &quot;grazing term&quot; causes problems on full roughness
+      half3 coatColor = EnvironmentBRDFClearCoat(brdfDataClearCoat, clearCoatMask, coatIndirectSpecular, fresnelTerm);
+
+      // Blend with base layer using khronos glTF recommended way using NoV
+      // Smooth surface &amp; &quot;ambiguous&quot; lighting
+      // NOTE: fresnelTerm (above) is pow4 instead of pow5, but should be ok as blend weight.
+      half coatFresnel = kDielectricSpec.x + kDielectricSpec.a * fresnelTerm;
+      return (color * (1.0 - coatFresnel * clearCoatMask) + coatColor) * occlusion;
+  #else
+      return color * occlusion;
+  #endif
+  &#125;
+</code></pre>
+<blockquote>
+<p>我们可以看到，函数先获取菲涅尔项，Unity使用的是$Pow4$，因为在表面数据计算中我们就已经采样了烘焙光，所以能直接获得间接光的漫反射就是 <strong>surfaceData.bakedGi</strong>，而间接光的高光则采用了环境光反射高光函数计算获得。获得间接光的漫反射颜色和高光颜色后，使用BRDF计算求取获得brdf颜色，最后乘以间接光遮罩区域就得到了间接光颜色。</p>
+   <details><summary> <font color="#007ACC">🐍 GlossyEnvironmentReflection的定义是？ </font></summary></blockquote>
+<pre><code class="language-hlsl">  half3 GlossyEnvironmentReflection(half3 reflectVector, half perceptualRoughness, half occlusion)
+  &#123;
+  #if !defined(_ENVIRONMENTREFLECTIONS_OFF)
+      half3 irradiance;
+      half mip = PerceptualRoughnessToMipmapLevel(perceptualRoughness);
+      half4 encodedIrradiance = half4(SAMPLE_TEXTURECUBE_LOD(unity_SpecCube0, samplerunity_SpecCube0, reflectVector, mip));
+
+      irradiance = DecodeHDREnvironment(encodedIrradiance, unity_SpecCube0_HDR);
+
+      return irradiance * occlusion;
+  #else
+
+      return _GlossyEnvironmentColor.rgb * occlusion;
+  #endif // _ENVIRONMENTREFLECTIONS_OFF
+  &#125;
+</code></pre>
+   </details>
+
+   </details>
+
+<ol start="12">
+<li>匹配主灯光层级并进行物理光照计算：</li>
+</ol>
+<pre><code class="language-hlsl">  if (IsMatchingLightLayer(mainLight.layerMask, meshRenderingLayers))
+  &#123;
+      lightingData.mainLightColor = LightingPhysicallyBased(brdfData, brdfDataClearCoat,
+                                                          mainLight,
+                                                          inputData.normalWS, inputData.viewDirectionWS,
+                                                          surfaceData.clearCoatMask, specularHighlightsOff);
+  &#125;
+</code></pre>
+<p>   这里的物理光照是最核心的地方，我们会在下面详解。</p>
+<ol start="13">
+<li>匹配额外灯光层级并进行物理光照计算：</li>
+</ol>
+<pre><code class="language-hlsl">  #if defined(_ADDITIONAL_LIGHTS)
+      uint pixelLightCount = GetAdditionalLightsCount();
+
+      #if USE_CLUSTERED_LIGHTING
+      for (uint lightIndex = 0; lightIndex &lt; min(_AdditionalLightsDirectionalCount, MAX_VISIBLE_LIGHTS); lightIndex++)
+      &#123;
+          Light light = GetAdditionalLight(lightIndex, inputData, shadowMask, aoFactor);
+
+          if (IsMatchingLightLayer(light.layerMask, meshRenderingLayers))
+          &#123;
+              lightingData.additionalLightsColor += LightingPhysicallyBased(brdfData, brdfDataClearCoat, light,
+                                                                          inputData.normalWS, inputData.viewDirectionWS,
+                                                                          surfaceData.clearCoatMask, specularHighlightsOff);
+          &#125;
+      &#125;
+      #endif
+
+      LIGHT_LOOP_BEGIN(pixelLightCount)
+          Light light = GetAdditionalLight(lightIndex, inputData, shadowMask, aoFactor);
+
+          if (IsMatchingLightLayer(light.layerMask, meshRenderingLayers))
+          &#123;
+              lightingData.additionalLightsColor += LightingPhysicallyBased(brdfData, brdfDataClearCoat, light,
+                                                                          inputData.normalWS, inputData.viewDirectionWS,
+                                                                          surfaceData.clearCoatMask, specularHighlightsOff);
+          &#125;
+      LIGHT_LOOP_END
+      #endif
+</code></pre>
+   <details><summary> <font color="#007ACC">🐍 USE_CLUSTERED_LIGHTING是什么宏定义？ </font></summary>
+
+<pre><code class="language-hlsl">  #if defined(_CLUSTERED_RENDERING)
+  #define _ADDITIONAL_LIGHTS 1
+  #undef _ADDITIONAL_LIGHTS_VERTEX
+  #define USE_CLUSTERED_LIGHTING 1
+  #else
+  #define USE_CLUSTERED_LIGHTING 0
+  #endif
+</code></pre>
+<p>   集群化光照（Clustered Lighting）是一种优化多光源渲染的技术，能大幅提升大量光源场景下的性能。<br>   </details></p>
+<ol start="14">
+<li>叠加顶点着色光照：</li>
+</ol>
+<pre><code class="language-hlsl">  #if defined(_ADDITIONAL_LIGHTS_VERTEX)
+  lightingData.vertexLightingColor += inputData.vertexLighting * brdfData.diffuse;
+  #endif
+</code></pre>
+<ol start="15">
+<li>计算最终颜色并返回：</li>
+</ol>
+<pre><code class="language-hlsl">  return CalculateFinalColor(lightingData, surfaceData.alpha);
+</code></pre>
+<pre><code class="language-hlsl">  half3 CalculateLightingColor(LightingData lightingData, half3 albedo)
+  &#123;
+      half3 lightingColor = 0;
+
+      if (IsOnlyAOLightingFeatureEnabled())
+      &#123;
+          return lightingData.giColor; // Contains white + AO
+      &#125;
+
+      if (IsLightingFeatureEnabled(DEBUGLIGHTINGFEATUREFLAGS_GLOBAL_ILLUMINATION))
+      &#123;
+          lightingColor += lightingData.giColor;
+      &#125;
+
+      if (IsLightingFeatureEnabled(DEBUGLIGHTINGFEATUREFLAGS_MAIN_LIGHT))
+      &#123;
+          lightingColor += lightingData.mainLightColor;
+      &#125;
+
+      if (IsLightingFeatureEnabled(DEBUGLIGHTINGFEATUREFLAGS_ADDITIONAL_LIGHTS))
+      &#123;
+          lightingColor += lightingData.additionalLightsColor;
+      &#125;
+
+      if (IsLightingFeatureEnabled(DEBUGLIGHTINGFEATUREFLAGS_VERTEX_LIGHTING))
+      &#123;
+          lightingColor += lightingData.vertexLightingColor;
+      &#125;
+
+      lightingColor *= albedo;
+
+      if (IsLightingFeatureEnabled(DEBUGLIGHTINGFEATUREFLAGS_EMISSION))
+      &#123;
+          lightingColor += lightingData.emissionColor;
+      &#125;
+
+      return lightingColor;
+  &#125;
+
+  half4 CalculateFinalColor(LightingData lightingData, half alpha)
+  &#123;
+      half3 finalColor = CalculateLightingColor(lightingData, 1);
+
+      return half4(finalColor, alpha);
+  &#125;
+</code></pre>
+<p>   这里还是比较容易理解的，就是判断每个功能有没有开启，开启了就叠加光的颜色。
+   </p>
+</li>
+<li><p>混合雾效：</p>
+</li>
+</ol>
+<pre><code class="language-hlsl">color.rgb = MixFog(color.rgb, inputData.fogCoord);
+</code></pre>
+<ol start="9">
+<li>根据类型设置透明度：</li>
+</ol>
+<pre><code class="language-hlsl">color.a = OutputAlpha(color.a, _Surface);
+
+half OutputAlpha(half outputAlpha, half surfaceType = half(0.0))
+&#123;
+    return surfaceType == 1 ? outputAlpha : half(1.0);
+&#125;
+</code></pre>
+<ol start="10">
+<li>返回颜色。</li>
+</ol>
+<h3 id="物理光照LightingPhysicallyBased详解"><a href="#物理光照LightingPhysicallyBased详解" class="headerlink" title="物理光照LightingPhysicallyBased详解"></a>物理光照LightingPhysicallyBased详解</h3><p>&emsp;URP有五个构造函数，一个主函数，现附上五个构造函数代码：</p>
+<pre><code class="language-hlsl">half3 LightingPhysicallyBased(BRDFData brdfData, BRDFData brdfDataClearCoat, Light light, half3 normalWS, half3 viewDirectionWS, half clearCoatMask, bool specularHighlightsOff)
+&#123;
+    return LightingPhysicallyBased(brdfData, brdfDataClearCoat, light.color, light.direction, light.distanceAttenuation * light.shadowAttenuation, normalWS, viewDirectionWS, clearCoatMask, specularHighlightsOff);
+&#125;
+
+// Backwards compatibility
+half3 LightingPhysicallyBased(BRDFData brdfData, Light light, half3 normalWS, half3 viewDirectionWS)
+&#123;
+    #ifdef _SPECULARHIGHLIGHTS_OFF
+    bool specularHighlightsOff = true;
+#else
+    bool specularHighlightsOff = false;
+#endif
+    const BRDFData noClearCoat = (BRDFData)0;
+    return LightingPhysicallyBased(brdfData, noClearCoat, light, normalWS, viewDirectionWS, 0.0, specularHighlightsOff);
+&#125;
+
+half3 LightingPhysicallyBased(BRDFData brdfData, half3 lightColor, half3 lightDirectionWS, half lightAttenuation, half3 normalWS, half3 viewDirectionWS)
+&#123;
+    Light light;
+    light.color = lightColor;
+    light.direction = lightDirectionWS;
+    light.distanceAttenuation = lightAttenuation;
+    light.shadowAttenuation   = 1;
+    return LightingPhysicallyBased(brdfData, light, normalWS, viewDirectionWS);
+&#125;
+
+half3 LightingPhysicallyBased(BRDFData brdfData, Light light, half3 normalWS, half3 viewDirectionWS, bool specularHighlightsOff)
+&#123;
+    const BRDFData noClearCoat = (BRDFData)0;
+    return LightingPhysicallyBased(brdfData, noClearCoat, light, normalWS, viewDirectionWS, 0.0, specularHighlightsOff);
+&#125;
+
+half3 LightingPhysicallyBased(BRDFData brdfData, half3 lightColor, half3 lightDirectionWS, half lightAttenuation, half3 normalWS, half3 viewDirectionWS, bool specularHighlightsOff)
+&#123;
+    Light light;
+    light.color = lightColor;
+    light.direction = lightDirectionWS;
+    light.distanceAttenuation = lightAttenuation;
+    light.shadowAttenuation   = 1;
+    return LightingPhysicallyBased(brdfData, light, viewDirectionWS, specularHighlightsOff, specularHighlightsOff);
+&#125;
+</code></pre>
+<p>&emsp;核心还是要看主函数：</p>
+<pre><code class="language-hlsl">half3 LightingPhysicallyBased(BRDFData brdfData, BRDFData brdfDataClearCoat,
+    half3 lightColor, half3 lightDirectionWS, half lightAttenuation,
+    half3 normalWS, half3 viewDirectionWS,
+    half clearCoatMask, bool specularHighlightsOff)
+&#123;
+    half NdotL = saturate(dot(normalWS, lightDirectionWS));
+    half3 radiance = lightColor * (lightAttenuation * NdotL);
+
+    half3 brdf = brdfData.diffuse;
+#ifndef _SPECULARHIGHLIGHTS_OFF
+    [branch] if (!specularHighlightsOff)
+    &#123;
+        brdf += brdfData.specular * DirectBRDFSpecular(brdfData, normalWS, lightDirectionWS, viewDirectionWS);
+
+#if defined(_CLEARCOAT) || defined(_CLEARCOATMAP)
+        // Clear coat evaluates the specular a second timw and has some common terms with the base specular.
+        // We rely on the compiler to merge these and compute them only once.
+        half brdfCoat = kDielectricSpec.r * DirectBRDFSpecular(brdfDataClearCoat, normalWS, lightDirectionWS, viewDirectionWS);
+
+            // Mix clear coat and base layer using khronos glTF recommended formula
+            // https://github.com/KhronosGroup/glTF/blob/master/extensions/2.0/Khronos/KHR_materials_clearcoat/README.md
+            // Use NoV for direct too instead of LoH as an optimization (NoV is light invariant).
+            half NoV = saturate(dot(normalWS, viewDirectionWS));
+            // Use slightly simpler fresnelTerm (Pow4 vs Pow5) as a small optimization.
+            // It is matching fresnel used in the GI/Env, so should produce a consistent clear coat blend (env vs. direct)
+            half coatFresnel = kDielectricSpec.x + kDielectricSpec.a * Pow4(1.0 - NoV);
+
+        brdf = brdf * (1.0 - clearCoatMask * coatFresnel) + brdfCoat * clearCoatMask;
+#endif // _CLEARCOAT
+    &#125;
+#endif // _SPECULARHIGHLIGHTS_OFF
+
+    return brdf * radiance;
+&#125;
+</code></pre>
+<p>&emsp;清漆的我们可以不看，那代码就可以简化成：</p>
+<pre><code class="language-hlsl">half3 LightingPhysicallyBased(BRDFData brdfData, BRDFData brdfDataClearCoat,
+    half3 lightColor, half3 lightDirectionWS, half lightAttenuation,
+    half3 normalWS, half3 viewDirectionWS,
+    half clearCoatMask, bool specularHighlightsOff)
+&#123;
+    half NdotL = saturate(dot(normalWS, lightDirectionWS));
+    half3 radiance = lightColor * (lightAttenuation * NdotL);
+
+    half3 brdf = brdfData.diffuse;
+#ifndef _SPECULARHIGHLIGHTS_OFF
+    [branch] if (!specularHighlightsOff)
+    &#123;
+        brdf += brdfData.specular * DirectBRDFSpecular(brdfData, normalWS, lightDirectionWS, viewDirectionWS);
+    &#125;
+#endif // _SPECULARHIGHLIGHTS_OFF
+
+    return brdf * radiance;
+&#125;
+</code></pre>
+<ol>
+<li><p>首先就是获取入射光的出射亮度radiance，这可以在上一篇URP-PBR里找到理论详解：</p>
+<pre><code class="language-hlsl">    half NdotL = saturate(dot(normalWS, lightDirectionWS));
+    half3 radiance = lightColor * (lightAttenuation * NdotL);
+</code></pre>
+<p> &emsp;简单来说，辐照度也就是我们的albedo，光的albedo也就是光照颜色，因为点光和一些其余光源会有光照衰弱的特性（随距离增加能量减少），那么我们就获得了辐照度：<code>float3 irradiance = light.color * light.distanceAttenuation * light.shadowAttenuation;</code>。光的辐射亮度与辐照度之间是正比关系，这个数值就是物体表面法线与光线的余弦，那么我们自然而然就获取了光照的辐照亮度了。</p>
+</li>
+<li><p>brdf漫反射项没什么要说的，就是根据金属度或者高光求出的物体漫反射项。</p>
+</li>
+<li><p>brdf高光项比较复杂，传统的就是CookTorrance的模型，不过Unity对其做了一些优化和曲线拟合，和传统的PBR有所不同：</p>
+<pre><code class="language-hlsl">brdf += brdfData.specular * DirectBRDFSpecular(brdfData, normalWS, lightDirectionWS, viewDirectionWS);
+</code></pre>
+<p> 其核心函数就是<strong>DirectBRDFSpecular</strong>：</p>
+<pre><code class="language-hlsl">// Computes the scalar specular term for Minimalist CookTorrance BRDF
+// NOTE: needs to be multiplied with reflectance f0, i.e. specular color to complete
+half DirectBRDFSpecular(BRDFData brdfData, half3 normalWS, half3 lightDirectionWS, half3 viewDirectionWS)
+&#123;
+    float3 lightDirectionWSFloat3 = float3(lightDirectionWS);
+    float3 halfDir = SafeNormalize(lightDirectionWSFloat3 + float3(viewDirectionWS));
+
+    float NoH = saturate(dot(float3(normalWS), halfDir));
+    half LoH = half(saturate(dot(lightDirectionWSFloat3, halfDir)));
+
+    // GGX Distribution multiplied by combined approximation of Visibility and Fresnel
+    // BRDFspec = (D * V * F) / 4.0
+    // D = roughness^2 / ( NoH^2 * (roughness^2 - 1) + 1 )^2
+    // V * F = 1.0 / ( LoH^2 * (roughness + 0.5) )
+    // See &quot;Optimizing PBR for Mobile&quot; from Siggraph 2015 moving mobile graphics course
+    // https://community.arm.com/events/1155
+
+    // Final BRDFspec = roughness^2 / ( NoH^2 * (roughness^2 - 1) + 1 )^2 * (LoH^2 * (roughness + 0.5) * 4.0)
+    // We further optimize a few light invariant terms
+    // brdfData.normalizationTerm = (roughness + 0.5) * 4.0 rewritten as roughness * 4.0 + 2.0 to a fit a MAD.
+    float d = NoH * NoH * brdfData.roughness2MinusOne + 1.00001f;
+
+    half LoH2 = LoH * LoH;
+    half specularTerm = brdfData.roughness2 / ((d * d) * max(0.1h, LoH2) * brdfData.normalizationTerm);
+
+    // On platforms where half actually means something, the denominator has a risk of overflow
+    // clamp below was added specifically to &quot;fix&quot; that, but dx compiler (we convert bytecode to metal/gles)
+    // sees that specularTerm have only non-negative terms, so it skips max(0,..) in clamp (leaving only min(100,...))
+#if REAL_IS_HALF
+    specularTerm = specularTerm - HALF_MIN;
+    // Update: Conservative bump from 100.0 to 1000.0 to better match the full float specular look.
+    // Roughly 65504.0 / 32*2 == 1023.5,
+    // or HALF_MAX / ((mobile) MAX_VISIBLE_LIGHTS * 2),
+    // to reserve half of the per light range for specular and half for diffuse + indirect + emissive.
+    specularTerm = clamp(specularTerm, 0.0, 1000.0); // Prevent FP16 overflow on mobiles
+#endif
+
+    return specularTerm;
+&#125;
+</code></pre>
+<blockquote>
+<p>&emsp;我们首先可以注意到注释中的<strong>D</strong>项目，它就是<strong>GGX</strong>中的<strong>D</strong>项计算，只是没有除以$\pi$，这是Unity故意去掉的，让整体画面看起来亮一些。</p>
+<p>&emsp;<strong>V*F</strong>也就是<strong>G*F</strong>，这是拟合的近似公式:$\frac{1}{max((l·h)^2,0.1)(roughness+0.5)}$.</p>
+<p>&emsp;在官方介绍的文档中$V &#x3D; \frac{G(n·v,n·l,roughness)}{(n·v)(n·l)}$。<strong>G</strong>用的就是$G_{sksm} &#x3D; \frac{(n·l)(n·v)}{lerp(roughness^2,1,(l·h)^2)}$，因此$V &#x3D; \frac{1}{lerp(roughness,1,(l·h)^2)}$.</p>
+<p>&emsp;$F &#x3D; (1-(l·h))^5$.<br>&emsp;那么$V·F &#x3D; \frac{(1-(l·h)^5)}{(l·h)^2(1-roughness^2)+roughness^2}$.</p>
+<p>&emsp;当(l·h)接近1的时候，曲线会呈现平坦状态，当l与h角度接近90度也就是为0时候，曲线倾斜度非常剧烈，光线掠过表面并几乎与相机方向相反照射，斜率会迅速增加。<br>&emsp;本来这样的优化就是对移动端进行操作的，Unity又进行了魔改成最后的曲线：$(V·F) &#x3D; \frac{1}{(l·h)^2 * (roughness + 0.5)}$，这样的曲线变化率变得更高了，也导致看起来的高光很亮，但在移动端看起来还是可以的，这样的优化极大增加了渲染的效率，所以Unity内置的并不算是完全物理的，有很多近似的地方在里面。</p>
+</blockquote>
+ <details>
+ <summary> 
+ <font color="#007ACC">🐍 为什么会推导出G_sksm这样的函数出来呢？ </font>
+ </summary>
+
+<p> &emsp;参考连接: <a target="_blank" rel="noopener" href="https://community.arm.com/cfs-file/__key/communityserver-blogs-components-weblogfiles/00-00-00-20-66/siggraph2015_2D00_mmg_2D00_renaldas_2D00_notes.pdf">https://community.arm.com/cfs-file/__key/communityserver-blogs-components-weblogfiles/00-00-00-20-66/siggraph2015_2D00_mmg_2D00_renaldas_2D00_notes.pdf</a><br> &emsp;原因是：&amp;GGX&amp;本身就是Smith模型：&amp;G_{Smith} &#x3D; \frac{(n·l)(n·v)}{lerp(k,1,(n·l))lerp(k,1,(n·v))}&amp;，因为&amp;V&amp;和&amp;G&amp;的关系是提取了&amp;f_{cook-torrance}&amp;的分母并进行了约分，公式如下：<br> $$<br> \begin{align}<br> V_{Smith} &amp;&#x3D; \frac{G_{Smith}}{(n·l)(n·v)}\\<br> &amp; &#x3D; \frac{(n·l)(n·v)}{lerp(k,1,(n·l))lerp(k,1,(n·v))(n·l)(n·v)}\\<br> &amp; &#x3D; \frac{1}{lerp(k,1,(n·l))lerp(k,1,(n·v))}<br> \end{align}<br> $$<br> &emsp;而有一种廉价的近似方法KSK，它原本的公式应该为：$G_{ksk原版}\frac{2(n·h)^2}{(l·h)(v·h)}$，但Unity对移动端进行了优化，$G_{ksk优化}&#x3D;\frac{(n·l)(n·v)}{(l·h)^2}$，保留原本的ksk模型可以在PC上更加高效的物理计算，我们这里并没有处理。因此$V_{ksk} &#x3D; \frac{1}{(l·h)^2}$。<br> &emsp;但是这样的模型缺少了粗糙度控制，后面<strong>J.Hable</strong>对其进行了改造，则变成了$V_{sksm} &#x3D; \frac{1}{(l·h)^2(1-roughness^2)+roughness^2}$ ，所以这也是$G_{sksm}$的由来。</p>
+ <div class="note warning flat"><p>注意：公式推导的roughness与代码中的roughnes不一样，代码中的roughness是Untiy做了预处理，是公式推导的roughness的平法。</p>
+</div>
+ </details></li>
+<li><p>计算完高光项，k_s乘以镜面反射系数+k_d，最后再乘以灯光辐射亮度，就是最终输出的颜色。</p>
+</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://miyu-web.github.io">米芝鱼</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://miyu-web.github.io/undefined/7fc566d1.html">https://miyu-web.github.io/undefined/7fc566d1.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://miyu-web.github.io" target="_blank">FISH HOME</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Shader/">Shader</a></div><div class="post-share"><div class="social-share" data-image="/images/head.png" data-sites="wechat,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/undefined/bb6f3960.html" title="URP-PBR"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">URP-PBR</div></div><div class="info-2"><div class="info-item-1">在Unity URP中讲解PBR理论，拆分于URP默认的LitShader编写PBR代码</div></div></div></a><a class="pagination-related" href="/undefined/84a14b1a.html" title="Unity如何快速创建URPShader模板"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Unity如何快速创建URPShader模板</div></div><div class="info-2"><div class="info-item-1">Unity如何创建URPShader模板</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/undefined/bb6f3960.html" title="URP-PBR"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="fas fa-history fa-fw"></i> 2026-03-05</div><div class="info-item-2">URP-PBR</div></div><div class="info-2"><div class="info-item-1">在Unity URP中讲解PBR理论，拆分于URP默认的LitShader编写PBR代码</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/head.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">米芝鱼</div><div class="author-info-description">闲闲碎碎</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">3</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="card-info-social-icons"><a class="social-icon" href="https://space.bilibili.com/82059271?spm_id_from=333.1007.0.0" target="_blank" title="bilibili"><i class="fab fa-brands fa-bilibili" style="color: #3ea9e6;"></i></a><a class="social-icon" href="https://blog.csdn.net/m0_68267247?spm=1000.2115.3001.5343" target="_blank" title="CSDN"><i class="fas fa-solid fa-c" style="color: #f56d41;"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B1%9E%E6%80%A7"><span class="toc-text">属性</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%9D%80%E8%89%B2%E5%99%A8%E5%A3%B0%E6%98%8E"><span class="toc-text">着色器声明</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E9%94%AE%E5%AD%97%E5%A3%B0%E6%98%8E"><span class="toc-text">关键字声明</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BC%95%E7%94%A8Shader%E5%BA%93"><span class="toc-text">引用Shader库</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LitInput-hlsl"><span class="toc-text">LitInput.hlsl</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E7%94%A8%E5%A4%B4%E6%96%87%E4%BB%B6"><span class="toc-text">引用头文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%84%E5%AE%9A%E4%B9%89%E7%BB%86%E8%8A%82%E6%A0%87%E7%AD%BE"><span class="toc-text">预定义细节标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A3%B0%E6%98%8E%E5%8F%98%E9%87%8F"><span class="toc-text">声明变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%84%E5%AE%9A%E4%B9%89%E4%B8%80%E4%B8%AA%E5%87%BD%E6%95%B0%E5%A4%84%E7%90%86%E5%A6%82%E4%BD%95%E9%87%87%E6%A0%B7%E9%AB%98%E5%85%89%E5%92%8C%E9%87%91%E5%B1%9E%E5%B7%A5%E4%BD%9C%E6%B5%81%E4%B8%AD%E5%AE%9A%E4%B9%89%E7%9A%84%E8%B4%B4%E5%9B%BE"><span class="toc-text">预定义一个函数处理如何采样高光和金属工作流中定义的贴图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E9%87%87%E6%A0%B7%E9%87%91%E5%B1%9E-%E9%AB%98%E5%85%89%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%9A%84%E9%AB%98%E5%85%89%E5%87%BD%E6%95%B0"><span class="toc-text">定义采样金属&#x2F;高光工作流的高光函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E9%87%87%E6%A0%B7%E9%81%AE%E8%94%BD%E5%9B%BE%E5%87%BD%E6%95%B0"><span class="toc-text">定义采样遮蔽图函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E9%87%87%E6%A0%B7%E6%B8%85%E6%BC%86%E8%B4%B4%E5%9B%BE%E5%87%BD%E6%95%B0"><span class="toc-text">定义采样清漆贴图函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E8%A7%86%E5%B7%AE%E6%98%A0%E5%B0%84%E5%87%BD%E6%95%B0"><span class="toc-text">定义视差映射函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E5%BA%94%E7%94%A8%E7%BB%86%E8%8A%82%E8%B4%B4%E5%9B%BE%E5%87%BD%E6%95%B0%E4%B8%8E%E9%87%87%E6%A0%B7%E7%BB%86%E8%8A%82%E8%B4%B4%E5%9B%BE%E5%87%BD%E6%95%B0"><span class="toc-text">定义应用细节贴图函数与采样细节贴图函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E9%87%87%E6%A0%B7%E7%BB%86%E8%8A%82%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE%E5%87%BD%E6%95%B0"><span class="toc-text">定义采样细节法线贴图函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E8%A1%A8%E9%9D%A2%E6%95%B0%E6%8D%AE%E5%87%BD%E6%95%B0"><span class="toc-text">初始化表面数据函数</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LitForwardPass-hlsl"><span class="toc-text">LitForwardPass.hlsl</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E7%94%A8%E5%85%89%E7%85%A7%E5%A4%B4%E6%96%87%E4%BB%B6"><span class="toc-text">引用光照头文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E7%94%A8LODGroup%E6%95%88%E6%9E%9C%E5%A4%B4%E6%96%87%E4%BB%B6"><span class="toc-text">引用LODGroup效果头文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%84%E5%AE%9A%E4%B9%89%E8%A7%86%E5%B7%AE%E6%98%A0%E5%B0%84%E6%A0%87%E7%AD%BE"><span class="toc-text">预定义视差映射标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%84%E5%AE%9A%E4%B9%89%E6%B3%95%E7%BA%BF%E8%B4%B4%E5%9B%BE%E4%B8%8E%E8%A7%86%E5%AF%9F%E6%98%A0%E5%B0%84%E9%9C%80%E8%A6%81%E5%88%87%E7%BA%BF%E7%A9%BA%E9%97%B4%E6%A0%87%E7%AD%BE"><span class="toc-text">预定义法线贴图与视察映射需要切线空间标签</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A3%B0%E6%98%8E%E9%A1%B6%E7%82%B9%E8%BE%93%E5%85%A5%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-text">声明顶点输入结构体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A3%B0%E6%98%8E%E9%A1%B6%E7%82%B9%E8%BE%93%E5%87%BA%E7%BB%93%E6%9E%84%E4%BD%93"><span class="toc-text">声明顶点输出结构体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BE%93%E5%85%A5%E6%95%B0%E6%8D%AE%E5%87%BD%E6%95%B0"><span class="toc-text">初始化输入数据函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B6%E7%82%B9%E7%9D%80%E8%89%B2%E5%99%A8LitPassVertex"><span class="toc-text">顶点着色器LitPassVertex</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%87%E5%85%83%E7%9D%80%E8%89%B2%E5%99%A8LitPassFragment"><span class="toc-text">片元着色器LitPassFragment</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%A9%E7%90%86%E5%85%89%E7%85%A7LightingPhysicallyBased%E8%AF%A6%E8%A7%A3"><span class="toc-text">物理光照LightingPhysicallyBased详解</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/undefined/84a14b1a.html" title="Unity如何快速创建URPShader模板">Unity如何快速创建URPShader模板</a><time datetime="2026-03-09T15:20:43.000Z" title="发表于 2026-03-09 23:20:43">2026-03-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/undefined/7fc566d1.html" title="UnityURP-LitShader详解">UnityURP-LitShader详解</a><time datetime="2026-03-09T15:20:26.000Z" title="发表于 2026-03-09 23:20:26">2026-03-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/undefined/bb6f3960.html" title="URP-PBR">URP-PBR</a><time datetime="2026-03-05T11:57:32.000Z" title="发表于 2026-03-05 19:57:32">2026-03-05</time></div></div></div></div></div></div></main><footer id="footer" style="background-color: #1f1f1f;"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By 米芝鱼</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">简</button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><script src="/js/tw_cn.js?v=5.5.4"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@6.1.9/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.1.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script></div><script id="canvas_nest" defer="defer" color="196,196,196" opacity="0.7" zIndex="-1" count="10" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/canvas-nest.min.js"></script><script defer data-pjax src="//events.vercount.one/js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.4"></script></div></div></body></html>
