@@ -1,0 +1,16 @@
+/* 当前行歌词样式（大字号） */
+.aplayer .aplayer-lrc p.aplayer-lrc-current {
+    font-size: 14px;
+    line-height: 1.5;        /* 增加行高，防止上下截断 */
+    color: #33beff9f;         /* 设置歌词颜色，使用 Hex 或 RGB 值 */
+    font-weight: bold;      /* 可以加粗 */
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.1); /* 可选：添加阴影效果 */
+}
+
+/* 普通行歌词样式 */
+.aplayer .aplayer-lrc p {
+    font-size: 20px;
+    line-height: 1.4;
+    color: #ccc;            /* 通常设置为较淡的颜色，增加层次感 */
+    font-weight: normal;
+}
